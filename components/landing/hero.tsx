@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
 const Hero = () => {
   return (
@@ -18,12 +19,11 @@ const Hero = () => {
           </p>
         </div>
         <div className="flex flex-col items-center gap-y-4">
-          <Link href="/sign-up">
-            {/* <button className="group relative inline-flex gap-x-2 h-12 z-20 items-center justify-center overflow-hidden border-2 border-primary rounded-md bg-white px-8 font-medium text-primary transition-all duration-100 [box-shadow:3px_3px_rgb(40_75_98)] hover:translate-x-[3px] hover:translate-y-[3px] hover:[box-shadow:0px_0px_rgb(40_75_98)] ">
+          {/* <button className="group relative inline-flex gap-x-2 h-12 z-20 items-center justify-center overflow-hidden border-2 border-primary rounded-md bg-white px-8 font-medium text-primary transition-all duration-100 [box-shadow:3px_3px_rgb(40_75_98)] hover:translate-x-[3px] hover:translate-y-[3px] hover:[box-shadow:0px_0px_rgb(40_75_98)] ">
                 Try Free {` `}
                 <ArrowUpRight className="text-primary" />
             </button> */}
-          </Link>
+          <InteractiveHoverButton>Get Started</InteractiveHoverButton>
         </div>
       </div>
     </div>

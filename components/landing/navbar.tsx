@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const navbar = () => {
+  const router = useRouter();
   return (
     <div>
       <nav>
@@ -21,6 +24,9 @@ const navbar = () => {
           <div className="flex gap-x-4">
             <Link href={"/sign-in"}>
               <Button
+                onClick={() => {
+                  router.push("/sign-in");
+                }}
                 type="button"
                 variant="outline"
                 className="hover:bg-gray-50 h-9 shadow hidden md:block cursor-pointer"
@@ -29,14 +35,15 @@ const navbar = () => {
               </Button>
             </Link>
 
-            <Link href={"dashboard"}>
-              <Button
-                type="button"
-                className="bg-primary hover:bg-primary/80 h-9 cursor-pointer"
-              >
-                Signup
-              </Button>
-            </Link>
+            <Button
+              onClick={() => {
+                router.push("/sign-up");
+              }}
+              type="button"
+              className="bg-primary hover:bg-primary/80 h-9 cursor-pointer"
+            >
+              Signup
+            </Button>
           </div>
         </div>
       </nav>
