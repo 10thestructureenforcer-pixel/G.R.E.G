@@ -4,9 +4,11 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const navbar = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   return (
     <div>
       <nav>
@@ -21,8 +23,19 @@ const navbar = () => {
             />
             <p className="p-3 -mx-6 text-3xl font-semibold">G.R.E.G </p>
           </div>
-          <div className="flex gap-x-4">
-            <Link href={"/sign-in"}>
+          {session?.user ? (
+            <Button
+              onClick={() => {
+                router.push("/dashboard");
+              }}
+              type="button"
+              variant="outline"
+              className="bg-green-400 h-9 shadow hidden md:block cursor-pointer"
+            >
+              Dashboard
+            </Button>
+          ) : (
+            <div className="flex gap-x-4">
               <Button
                 onClick={() => {
                   router.push("/sign-in");
@@ -33,18 +46,18 @@ const navbar = () => {
               >
                 Log in
               </Button>
-            </Link>
 
-            <Button
-              onClick={() => {
-                router.push("/sign-up");
-              }}
-              type="button"
-              className="bg-primary hover:bg-primary/80 h-9 cursor-pointer"
-            >
-              Signup
-            </Button>
-          </div>
+              <Button
+                onClick={() => {
+                  router.push("/sign-up");
+                }}
+                type="button"
+                className="bg-primary hover:bg-primary/80 h-9 cursor-pointer"
+              >
+                Signup
+              </Button>
+            </div>
+          )}
         </div>
       </nav>
     </div>

@@ -1,19 +1,21 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
-import React from "react";
 
-const SignupButton = () => {
-  async function handleSignUp() {
+import React from "react";
+import { Button } from "../ui/button";
+import Image from "next/image";
+
+const SigninButton = () => {
+  async function handleSignIn() {
     await signIn("google", { redirectTo: "/dashboard" });
   }
+
   return (
     <div>
       <Button
         variant="default"
         className="w-full cursor-pointer "
-        onClick={handleSignUp}
+        onClick={handleSignIn}
       >
         Sign Up with{" "}
         <span>
@@ -30,4 +32,4 @@ const SignupButton = () => {
   );
 };
 
-export default SignupButton;
+export default SigninButton;

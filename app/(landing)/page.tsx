@@ -1,7 +1,6 @@
 import Hero from "@/components/landing/hero";
 import Navbar from "@/components/landing/navbar";
 import { DotPattern } from "@/components/magicui/dot-pattern";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import React from "react";
 
