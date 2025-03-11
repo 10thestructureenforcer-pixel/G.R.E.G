@@ -1,12 +1,11 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-const navbar = () => {
+const Navbar = () => {
   const router = useRouter();
   const { data: session } = useSession();
   return (
@@ -64,4 +63,4 @@ const navbar = () => {
   );
 };
 
-export default navbar;
+export default Navbar;
