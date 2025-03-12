@@ -1,0 +1,9 @@
+model CaseSummary {
+  id         String   @id @default(uuid())
+  casefile   CaseFile @relation(fields: [caseFileId], references: [id], onDelete: Cascade)
+  caseFileId String
+  summary    String   
+  createdAt  DateTime @default(now())
+  
+  @@map("case_summaries")
+}

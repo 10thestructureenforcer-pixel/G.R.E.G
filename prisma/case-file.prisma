@@ -1,0 +1,12 @@
+model CaseFile{
+    id          String   @id @default(uuid())
+    title       String
+    description String?
+    fileUrl     String   
+    uploadedBy  User     @relation(fields: [userId], references: [id])
+    userId      String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    case_summary CaseSummary[]
+}
