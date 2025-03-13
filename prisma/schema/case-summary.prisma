@@ -1,9 +1,16 @@
+enum STATUS {
+  PENDING
+  FAILED
+  SUCCESS
+}
+
 model CaseSummary {
-  id         String   @id @default(uuid())
-  casefile   CaseFile @relation(fields: [caseFileId], references: [id], onDelete: Cascade)
-  caseFileId String
+  id         String   @id  @default(uuid())
+  caseFileId String  @unique
   summary    String   
   createdAt  DateTime @default(now())
+  status     STATUS?
+  casefile   CaseFile @relation(fields: [caseFileId], references: [id], onDelete: Cascade) 
   
   @@map("case_summaries")
 }
