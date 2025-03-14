@@ -5,6 +5,8 @@ import { FiUpload, FiFile } from "react-icons/fi";
 const UploadComponent = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [summary, setSummary] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -41,19 +43,52 @@ const UploadComponent = () => {
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.type === "application/pdf") {
+      const fileType = droppedFile.type;
+      if (
+        fileType === "application/pdf" ||
+        fileType ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        fileType === "text/plain"
+      ) {
         setFile(droppedFile);
+      } else {
+        alert("Only PDF, DOCX, and TXT files are allowed");
       }
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (file) {
-      console.log("Uploading file:", file.name);
-      console.log(file);
-      alert(`File "${file.name}" ready for processing!`);
+      setIsLoading(true);
+      setSummary(null);
+
+      try {
+        // Create FormData object to send the file
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Send to your API endpoint
+        const response = await fetch("/api/summarize", {
+          method: "POST",
+          body: formData,
+        });
+
+        // if (!response.ok) {
+        //   throw new Error(`Error: ${response.status}`);
+        // }
+
+        const data = await response.json();
+        console.log(data);
+        // setSummary(data.summary);
+        console.log("Document processed successfully:", data);
+      } catch (error) {
+        console.error("Error processing document:", error);
+        alert("Failed to process document. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     } else {
-      alert("Please select a PDF file first");
+      alert("Please select a file first");
     }
   };
 
@@ -112,16 +147,27 @@ const UploadComponent = () => {
       <div className="flex justify-center">
         <button
           onClick={handleSubmit}
-          disabled={!file}
-          className={`px-6 py-3 rounded-md font-medium transition-colors ${
-            file
+          disabled={!file || isLoading}
+          className={`px-6 py-3 rounded-md font-medium transition-colors cursor-pointer ${
+            file && !isLoading
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >
-          {file ? "Process Document" : "Upload a PDF First"}
+          {isLoading
+            ? "Processing..."
+            : file
+            ? "Process Document"
+            : "Upload a File First"}
         </button>
       </div>
+
+      {summary && (
+        <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+          <h2 className="text-xl font-medium mb-2">Summary</h2>
+          <p className="text-gray-700">{summary}</p>
+        </div>
+      )}
     </div>
   );
 };
