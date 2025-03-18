@@ -1,8 +1,23 @@
 import UploadComponent from "@/components/dashboard/research/page";
-import React from "react";
+import React, { Suspense } from "react";
 import RecentCases from "@/components/dashboard/research/recent-cases";
+import prisma from "@/lib/db";
+import { auth } from "@/auth";
 
-const page = () => {
+const page = async () => {
+  const session = await auth();
+  const recentCases = await prisma.caseFile.findMany({
+    where: {
+      uploadedBy: {
+        email: session?.user?.email,
+      },
+    },
+
+    include: {
+      casesummary: true,
+    },
+  });
+
   return (
     <div className="p-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -13,7 +28,9 @@ const page = () => {
         </div>
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm p-5 sticky top-24">
-            <RecentCases />
+            <Suspense fallback={<div>Loading recent cases...</div>}>
+              <RecentCases recentCases={recentCases} />
+            </Suspense>
           </div>
         </div>
       </div>

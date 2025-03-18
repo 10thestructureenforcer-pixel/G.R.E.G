@@ -9,6 +9,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { LangChainAdapter } from "ai";
 import { getSupabaseUrl } from "@/lib/supabase";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,6 +72,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    revalidatePath("/research");
+    // redirect("/research");
+
     const textcontent = await extractTextFromFile(fileBuffer, fileType);
     // console.log("content is ", textcontent);
 
@@ -124,6 +128,7 @@ Refine and improve the existing summary by incorporating relevant information fr
               data: {
                 summary: completion,
                 caseFileId: updatedsupabaseUrl.id,
+                status: "SUCCESS",
               },
             });
           },
@@ -131,6 +136,14 @@ Refine and improve the existing summary by incorporating relevant information fr
       });
     } catch (error) {
       console.error("Chain error:", error);
+      await prisma.caseSummary.update({
+        where: {
+          caseFileId: updatedsupabaseUrl.id,
+        },
+        data: {
+          status: "FAILED",
+        },
+      });
       return NextResponse.json(
         {
           error: "Failed to summarize document",
