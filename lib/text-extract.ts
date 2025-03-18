@@ -18,8 +18,6 @@ export async function extractTextFromFile(
       const loader = new DocxLoader(new Blob([fileBuffer], { type: fileType }));
       rawDocs = await loader.load();
       return rawDocs;
-    } else if (fileType === "text/plain") {
-      return fileBuffer.toString("utf-8");
     } else {
       throw new Error("Unsupported File Type: " + fileType);
     }

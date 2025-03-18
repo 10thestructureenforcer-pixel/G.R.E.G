@@ -1,17 +1,19 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
-import { getSupabaseUrl } from "@/lib/supabase";
 import { extractTextFromFile } from "@/lib/text-extract";
 import { NextRequest, NextResponse } from "next/server";
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { ChatOpenAI } from "@langchain/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { LangChainAdapter } from "ai";
 
 export async function POST(request: NextRequest) {
   try {
-    const formdata = await request.formData();
-    const session = await auth();
+    const body = await request.json();
 
-    console.log("the form data is ", formdata);
+    const session = await auth();
 
     const user = await prisma.user.findUnique({
       where: {
@@ -22,86 +24,91 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("the user is ", user);
+    const attachments = body.messages[0].experimental_attachments;
 
-    const file = formdata.get("file") as File;
-
-    if (!file) {
+    if (!attachments || attachments.length === 0) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const fileArrayBuffer = await file.arrayBuffer();
-    const fileBuffer = Buffer.from(fileArrayBuffer);
-    const textcontent = await extractTextFromFile(fileBuffer, file.type);
-    console.log("content is ", textcontent);
-    console.log("hwll");
+    const attachment = attachments[0];
 
-    let fullText = "";
-    if (Array.isArray(textcontent)) {
-      fullText = textcontent.map((doc) => doc.pageContent).join("\n\n");
-    }
-
-    console.log("full text is ", fullText);
-
-    const fileResut = await getSupabaseUrl(file);
-    console.log("the file result is ", fileResut);
-
-    if (!fileResut) {
+    if (!attachment.url || !attachment.url.startsWith("data:")) {
       return NextResponse.json(
-        { error: "Failed to upload file nooooo" },
-        { status: 500 }
+        { error: "Invalid file format" },
+        { status: 400 }
       );
     }
 
-    const fileInfo = {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    };
-    console.log(fileInfo);
+    const base64Data = attachment.url.split(",")[1];
+    const fileBuffer = Buffer.from(base64Data, "base64");
+    const fileType =
+      attachment.contentType || attachment.url.split(";")[0].split(":")[1];
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const textcontent = await extractTextFromFile(fileBuffer, fileType);
+    console.log("content is ", textcontent);
+
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 400,
+      chunkOverlap: 200,
+    });
+    const splitDocs = await splitter.splitDocuments(textcontent);
+    console.log(splitDocs);
+
+    const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
+    console.log(fileContent);
+
+    const llmSummary = new ChatOpenAI({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+    });
+
+    const summaryRefineTemplate = `
+    You are an expert in summarizing complex documents, including legal, technical, and academic content.
+    Your goal is to refine an existing summary of the provided document.
+    We have provided an existing summary up to a certain point: {existing_answer}
+    
+    Below you find additional content from the document:
+    --------
+    {context}
+    --------
+    
+    Given the new context, refine the summary and example questions.
+    The document content will also be used as the basis for a question-and-answer bot.
+    Provide some examples of specific questions and answers that could be asked about the document. Ensure the questions are relevant and directly tied to the content.
+    If the new context isn't useful, return the original summary and questions.
+    
+    Total output will include:
+    1. A refined summary of the document.
+    2. A list of updated example questions and answers that could be asked about the document.
+    
+    SUMMARY AND QUESTIONS:
+    `;
+
+    const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);
+    const summarizeChain = await createStuffDocumentsChain({
+      llm: llmSummary,
+      outputParser: new StringOutputParser(),
+      prompt: prompt,
+    });
+
+    try {
+      const stream = await summarizeChain.stream({
+        context: splitDocs,
+        existing_answer: "",
+      });
+
+      console.log("Summarization streaming started");
+
+      return LangChainAdapter.toDataStreamResponse(stream);
+    } catch (error) {
+      console.error("Chain error:", error);
+      return NextResponse.json(
+        {
+          error: "Failed to summarize document",
+        },
+        { status: 500 }
+      );
     }
-
-    const updateFileUrl = await prisma.caseFile.create({
-      data: {
-        title: fileResut.fileName,
-        fileUrl: fileResut.fileUrl,
-        userId: user.id,
-      },
-    });
-
-    const result = streamText({
-      model: openai("gpt-4"),
-      system: "You are a helpful assistant.",
-      prompt: `Summarize the following text: ${fullText}. Respond in markdown format where necessary.
-      Your job would be to do the following:
-      - Condense information from a larger source
-      - Capture key ideas and important details
-      - Omit minor or less relevant information
-      - Present information concisely
-      - Give a brief summary 
-      - Help readers quickly grasp the main concepts`,
-
-      onFinish: async ({ text }) => {
-        await prisma.caseSummary.upsert({
-          where: {
-            caseFileId: updateFileUrl.id,
-          },
-          update: {
-            summary: text as string,
-          },
-          create: {
-            summary: text as string,
-            caseFileId: updateFileUrl.id,
-          },
-        });
-      },
-    });
-
-    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(
