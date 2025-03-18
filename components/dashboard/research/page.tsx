@@ -2,6 +2,7 @@
 import { FileIcon } from "lucide-react";
 import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
+import { useChat, useCompletion } from "@ai-sdk/react";
 
 const UploadComponent = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -9,6 +10,19 @@ const UploadComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState<string>("");
 
+  const {
+    messages,
+    handleSubmit: formSubmit,
+    input,
+    handleInputChange,
+  } = useChat({
+    api: "/api/summarize",
+    streamProtocol: "data",
+    body: {
+      file: file,
+    },
+    credentials: "same-origin",
+  });
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
@@ -67,29 +81,31 @@ const UploadComponent = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("/api/summarize", {
-          method: "POST",
-          body: formData,
-        });
+        // const response = await fetch("/api/summarize", {
+        //   method: "POST",
+        //   body: formData,
+        // });
 
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //   throw new Error(`Error: ${response.status}`);
+        // }
 
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error("No reader available for streaming");
-        }
+        formSubmit({}, { allowEmptySubmit: true });
+        // const reader = response.body?.getReader();
+        // if (!reader) {
+        //   throw new Error("No reader available for streaming");
+        // }
+        // for (
+        //   let result = await reader.read();
+        //   !result.done;
+        //   result = await reader.read()
+        // ) {
+        //   const chunk = new TextDecoder().decode(result.value);
 
-        for (
-          let result = await reader.read();
-          !result.done;
-          result = await reader.read()
-        ) {
-          const chunk = new TextDecoder().decode(result.value);
-          setSummary((prev) => prev + chunk);
-          setFile(null);
-        }
+        //   setSummary((prev) => prev + chunk);
+
+        //   setFile(null);
+        // }
 
         console.log("Document processed successfully");
         alert("done");
@@ -177,9 +193,10 @@ const UploadComponent = () => {
       <div className="flex-1 bg-white rounded-lg shadow-sm p-5">
         <h2 className="text-xl font-semibold mb-5 text-gray-800">Summary</h2>
         <div className="p-6 bg-gray-50 rounded-md border border-gray-200 min-h-[300px] overflow-auto">
-          {summary ? (
-            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0">
-              {summary}
+          {messages ? (
+            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed text-black prose-pre:p-0">
+              messages are{" "}
+              {messages.filter((data) => data.role === "assistant")[0]?.content}
             </div>
           ) : (
             <div className="text-center">

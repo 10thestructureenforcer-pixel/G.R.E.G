@@ -1,17 +1,22 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
-import { getSupabaseUrl } from "@/lib/supabase";
 import { extractTextFromFile } from "@/lib/text-extract";
 import { NextRequest, NextResponse } from "next/server";
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { ChatOpenAI } from "@langchain/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { LangChainAdapter } from "ai";
 
 export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
     const formdata = await request.formData();
+
     const session = await auth();
 
-    console.log("the form data is ", formdata);
+    console.log("the form data", formdata);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -24,11 +29,12 @@ export async function POST(request: NextRequest) {
 
     console.log("the user is ", user);
 
-    const file = formdata.get("file") as File;
+    const file = body.file as File;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
+    console.log(file);
 
     const fileArrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(fileArrayBuffer);
@@ -36,72 +42,68 @@ export async function POST(request: NextRequest) {
     console.log("content is ", textcontent);
     console.log("hwll");
 
-    let fullText = "";
-    if (Array.isArray(textcontent)) {
-      fullText = textcontent.map((doc) => doc.pageContent).join("\n\n");
-    }
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 400,
+      chunkOverlap: 200,
+    });
+    const splitDocs = await splitter.splitDocuments(textcontent);
+    console.log(splitDocs);
 
-    console.log("full text is ", fullText);
+    const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
+    console.log(fileContent);
 
-    const fileResut = await getSupabaseUrl(file);
-    console.log("the file result is ", fileResut);
+    const llmSummary = new ChatOpenAI({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+    });
 
-    if (!fileResut) {
+    const summaryRefineTemplate = `
+    You are an expert in summarizing complex documents, including legal, technical, and academic content.
+    Your goal is to refine an existing summary of the provided document.
+    We have provided an existing summary up to a certain point: {existing_answer}
+    
+    Below you find additional content from the document:
+    --------
+    {context}
+    --------
+    
+    Given the new context, refine the summary and example questions.
+    The document content will also be used as the basis for a question-and-answer bot.
+    Provide some examples of specific questions and answers that could be asked about the document. Ensure the questions are relevant and directly tied to the content.
+    If the new context isn't useful, return the original summary and questions.
+    
+    Total output will include:
+    1. A refined summary of the document.
+    2. A list of updated example questions and answers that could be asked about the document.
+    
+    SUMMARY AND QUESTIONS:
+    `;
+
+    const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);
+    const summarizeChain = await createStuffDocumentsChain({
+      llm: llmSummary,
+      outputParser: new StringOutputParser(),
+      prompt: prompt,
+    });
+
+    try {
+      const stream = await summarizeChain.stream({
+        context: splitDocs,
+        existing_answer: "",
+      });
+
+      console.log("Summarization streaming started");
+
+      return LangChainAdapter.toDataStreamResponse(stream);
+    } catch (error) {
+      console.error("Chain error:", error);
       return NextResponse.json(
-        { error: "Failed to upload file nooooo" },
+        {
+          error: "Failed to summarize document",
+        },
         { status: 500 }
       );
     }
-
-    const fileInfo = {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    };
-    console.log(fileInfo);
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const updateFileUrl = await prisma.caseFile.create({
-      data: {
-        title: fileResut.fileName,
-        fileUrl: fileResut.fileUrl,
-        userId: user.id,
-      },
-    });
-
-    const result = streamText({
-      model: openai("gpt-4"),
-      system: "You are a helpful assistant.",
-      prompt: `Summarize the following text: ${fullText}. Respond in markdown format where necessary.
-      Your job would be to do the following:
-      - Condense information from a larger source
-      - Capture key ideas and important details
-      - Omit minor or less relevant information
-      - Present information concisely
-      - Give a brief summary 
-      - Help readers quickly grasp the main concepts`,
-
-      onFinish: async ({ text }) => {
-        await prisma.caseSummary.upsert({
-          where: {
-            caseFileId: updateFileUrl.id,
-          },
-          update: {
-            summary: text as string,
-          },
-          create: {
-            summary: text as string,
-            caseFileId: updateFileUrl.id,
-          },
-        });
-      },
-    });
-
-    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(
