@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     );
     // console.log("the supabase url", supabaseUploadUrl.fileUrl);
 
-    await prisma.caseFile.create({
+    const updatedsupabaseUrl = await prisma.caseFile.create({
       data: {
         fileUrl: supabaseUploadUrl.fileUrl,
         title: supabaseUploadUrl.fileName,
@@ -117,7 +117,18 @@ Refine and improve the existing summary by incorporating relevant information fr
 
       console.log("Summarization streaming started");
 
-      return LangChainAdapter.toDataStreamResponse(stream);
+      return LangChainAdapter.toDataStreamResponse(stream, {
+        callbacks: {
+          onFinal: async (completion) => {
+            await prisma.caseSummary.create({
+              data: {
+                summary: completion,
+                caseFileId: updatedsupabaseUrl.id,
+              },
+            });
+          },
+        },
+      });
     } catch (error) {
       console.error("Chain error:", error);
       return NextResponse.json(
