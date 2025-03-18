@@ -2,31 +2,28 @@
 import { FileIcon } from "lucide-react";
 import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
-import { useChat, useCompletion } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 
 const UploadComponent = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<FileList | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [summary, setSummary] = useState<string>("");
 
   const {
     messages,
     handleSubmit: formSubmit,
-    input,
-    handleInputChange,
+    setMessages,
+    status,
   } = useChat({
     api: "/api/summarize",
     streamProtocol: "data",
-    body: {
-      file: file,
-    },
     credentials: "same-origin",
   });
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      const fileType = selectedFile.type;
+      setMessages([]);
+
+      const selectedFile = e.target.files;
+      const fileType = selectedFile[0].type;
 
       if (
         fileType === "application/pdf" ||
@@ -56,9 +53,9 @@ const UploadComponent = () => {
     e.preventDefault();
     setIsDragging(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const droppedFile = e.dataTransfer.files[0];
-      const fileType = droppedFile.type;
+    if (e.dataTransfer.files) {
+      const droppedFile = e.dataTransfer.files;
+      const fileType = droppedFile[0].type;
       if (
         fileType === "application/pdf" ||
         fileType ===
@@ -74,46 +71,16 @@ const UploadComponent = () => {
 
   const handleSubmit = async () => {
     if (file) {
-      setIsLoading(true);
-      setSummary("");
-
       try {
-        const formData = new FormData();
-        formData.append("file", file);
+        setMessages([]);
 
-        // const response = await fetch("/api/summarize", {
-        //   method: "POST",
-        //   body: formData,
-        // });
-
-        // if (!response.ok) {
-        //   throw new Error(`Error: ${response.status}`);
-        // }
-
-        formSubmit({}, { allowEmptySubmit: true });
-        // const reader = response.body?.getReader();
-        // if (!reader) {
-        //   throw new Error("No reader available for streaming");
-        // }
-        // for (
-        //   let result = await reader.read();
-        //   !result.done;
-        //   result = await reader.read()
-        // ) {
-        //   const chunk = new TextDecoder().decode(result.value);
-
-        //   setSummary((prev) => prev + chunk);
-
-        //   setFile(null);
-        // }
-
-        console.log("Document processed successfully");
-        alert("done");
+        formSubmit(
+          {},
+          { allowEmptySubmit: true, experimental_attachments: file }
+        );
       } catch (error) {
         console.error("Error processing document:", error);
         alert("Failed to process document. Please try again.");
-      } finally {
-        setIsLoading(false);
       }
     } else {
       alert("Please select a file first");
@@ -137,6 +104,7 @@ const UploadComponent = () => {
             <input
               type="file"
               id="file-upload"
+              multiple={false}
               className="hidden"
               onChange={handleFileChange}
             />
@@ -145,9 +113,9 @@ const UploadComponent = () => {
               {file ? (
                 <div className="flex flex-col items-center">
                   <FiFile className="text-5xl text-green-600 mb-2" />
-                  <p className="text-green-600 font-medium">{file.name}</p>
+                  <p className="text-green-600 font-medium">{file[0].name}</p>
                   <p className="text-sm text-gray-500 mt-1">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB · PDF
+                    {(file[0].size / 1024 / 1024).toFixed(2)} MB · PDF
                   </p>
                   <p className="text-xs text-blue-500 mt-4 underline">
                     Click to change file
@@ -174,14 +142,14 @@ const UploadComponent = () => {
         <div className="flex justify-center">
           <button
             onClick={handleSubmit}
-            disabled={!file || isLoading}
+            disabled={!file || status === "submitted" || status === "streaming"}
             className={`px-6 py-3 rounded-md font-medium transition-colors cursor-pointer ${
-              file && !isLoading
+              file
                 ? "bg-blue-600 hover:bg-blue-700 text-white"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            {isLoading
+            {status === "submitted" || status === "streaming"
               ? "Processing..."
               : file
               ? "Process Document"
@@ -195,7 +163,6 @@ const UploadComponent = () => {
         <div className="p-6 bg-gray-50 rounded-md border border-gray-200 min-h-[300px] overflow-auto">
           {messages ? (
             <div className="prose break-words dark:prose-invert prose-p:leading-relaxed text-black prose-pre:p-0">
-              messages are{" "}
               {messages.filter((data) => data.role === "assistant")[0]?.content}
             </div>
           ) : (

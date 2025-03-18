@@ -12,11 +12,8 @@ import { LangChainAdapter } from "ai";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const formdata = await request.formData();
 
     const session = await auth();
-
-    console.log("the form data", formdata);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -27,20 +24,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("the user is ", user);
+    const attachments = body.messages[0].experimental_attachments;
 
-    const file = body.file as File;
-
-    if (!file) {
+    if (!attachments || attachments.length === 0) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-    console.log(file);
 
-    const fileArrayBuffer = await file.arrayBuffer();
-    const fileBuffer = Buffer.from(fileArrayBuffer);
-    const textcontent = await extractTextFromFile(fileBuffer, file.type);
+    const attachment = attachments[0];
+
+    if (!attachment.url || !attachment.url.startsWith("data:")) {
+      return NextResponse.json(
+        { error: "Invalid file format" },
+        { status: 400 }
+      );
+    }
+
+    const base64Data = attachment.url.split(",")[1];
+    const fileBuffer = Buffer.from(base64Data, "base64");
+    const fileType =
+      attachment.contentType || attachment.url.split(";")[0].split(":")[1];
+
+    const textcontent = await extractTextFromFile(fileBuffer, fileType);
     console.log("content is ", textcontent);
-    console.log("hwll");
 
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
