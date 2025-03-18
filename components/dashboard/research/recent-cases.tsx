@@ -12,7 +12,7 @@ const RecentCasesList = ({ recentCases }: RecentCasesInterface) => {
       <div className="max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
         <div className="grid grid-cols-1 gap-4">
           {recentCases.length > 0 ? (
-            recentCases.map((data: RecentCases, idx: number) => (
+            recentCases.map((data: RecentCases) => (
               <div
                 key={data.id}
                 className="flex items-center p-4 bg-gray-50 rounded-md border border-gray-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-colors duration-200"
