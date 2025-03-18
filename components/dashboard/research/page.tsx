@@ -3,6 +3,7 @@ import { FileIcon } from "lucide-react";
 import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
 import { useChat } from "@ai-sdk/react";
+import ReactMarkdown from "react-markdown";
 
 const UploadComponent = () => {
   const [file, setFile] = useState<FileList | null>(null);
@@ -88,8 +89,8 @@ const UploadComponent = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-6 p-4">
-      <div className="flex-1 p-4">
+    <div className="flex flex-col gap-6">
+      <div className="w-full">
         <h1 className="text-2xl font-medium mb-6">Research Documents</h1>
 
         <div className="mb-8">
@@ -158,12 +159,18 @@ const UploadComponent = () => {
         </div>
       </div>
 
-      <div className="flex-1 bg-white rounded-lg shadow-sm p-5">
+      <div className="w-full bg-white  p-5 overflow-hidden flex flex-col">
         <h2 className="text-xl font-semibold mb-5 text-gray-800">Summary</h2>
-        <div className="p-6 bg-gray-50 rounded-md border border-gray-200 min-h-[300px] overflow-auto">
-          {messages ? (
-            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed text-black prose-pre:p-0">
-              {messages.filter((data) => data.role === "assistant")[0]?.content}
+        <div className="p-6 bg-gray-50 rounded-md border min-h-[300px] flex-grow overflow-auto">
+          {messages &&
+          messages.filter((data) => data.role === "assistant").length > 0 ? (
+            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-headings:mb-2 prose-headings:mt-4 text-black prose-pre:p-0 max-w-full">
+              <ReactMarkdown>
+                {
+                  messages.filter((data) => data.role === "assistant")[0]
+                    ?.content
+                }
+              </ReactMarkdown>
             </div>
           ) : (
             <div className="text-center">

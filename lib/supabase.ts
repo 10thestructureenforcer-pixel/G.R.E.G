@@ -5,21 +5,22 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY!
 );
 
-export async function getSupabaseUrl(file: File) {
+export async function getSupabaseUrl(
+  file: Buffer,
+  fileName: string,
+  fileType: string
+) {
   try {
-    const fileName = file.name
+    const file_name = fileName
       .replace(/\s+/g, "-")
       .replace(/[^a-zA-Z0-9-.]/g, "");
 
-    const contentType = file.type;
-
-    console.log("ContentType from user is ", contentType);
-    const uploadName = `${fileName}-${Date.now()}`;
+    const uploadName = `${file_name}-${Date.now()}`;
 
     const { data: filedata, error } = await supabase.storage
       .from("legalcase-summary")
       .upload(uploadName, file, {
-        contentType: contentType,
+        contentType: fileType,
         cacheControl: "3600",
       });
 
@@ -33,9 +34,10 @@ export async function getSupabaseUrl(file: File) {
 
     return {
       fileUrl: publicUrl,
-      fileName: (file.name as string) ?? "",
+      fileName: fileName,
     };
   } catch (e) {
     console.log(e);
+    throw e;
   }
 }

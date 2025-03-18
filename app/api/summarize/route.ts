@@ -8,6 +8,7 @@ import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { LangChainAdapter } from "ai";
+import { getSupabaseUrl } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +25,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    if (!user) {
+      return NextResponse.json({
+        error: "No user found",
+      });
+    }
+
     const attachments = body.messages[0].experimental_attachments;
 
     if (!attachments || attachments.length === 0) {
@@ -31,6 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const attachment = attachments[0];
+    // console.log("the atatchment is ", attachment);
 
     if (!attachment.url || !attachment.url.startsWith("data:")) {
       return NextResponse.json(
@@ -41,18 +49,37 @@ export async function POST(request: NextRequest) {
 
     const base64Data = attachment.url.split(",")[1];
     const fileBuffer = Buffer.from(base64Data, "base64");
+    console.log("Filebuffer", fileBuffer);
     const fileType =
       attachment.contentType || attachment.url.split(";")[0].split(":")[1];
 
+    const fileName =
+      attachment.name || `file-${Date.now()}.${fileType.split("/")[1]}`;
+
+    const supabaseUploadUrl = await getSupabaseUrl(
+      fileBuffer,
+      fileName,
+      fileType
+    );
+    // console.log("the supabase url", supabaseUploadUrl.fileUrl);
+
+    await prisma.caseFile.create({
+      data: {
+        fileUrl: supabaseUploadUrl.fileUrl,
+        title: supabaseUploadUrl.fileName,
+        userId: user?.id,
+      },
+    });
+
     const textcontent = await extractTextFromFile(fileBuffer, fileType);
-    console.log("content is ", textcontent);
+    // console.log("content is ", textcontent);
 
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
       chunkOverlap: 200,
     });
     const splitDocs = await splitter.splitDocuments(textcontent);
-    console.log(splitDocs);
+    // console.log(splitDocs);
 
     const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
     console.log(fileContent);
@@ -63,25 +90,16 @@ export async function POST(request: NextRequest) {
     });
 
     const summaryRefineTemplate = `
-    You are an expert in summarizing complex documents, including legal, technical, and academic content.
-    Your goal is to refine an existing summary of the provided document.
-    We have provided an existing summary up to a certain point: {existing_answer}
+  You are an expert in analyzing and summarizing complex documents, including legal, technical, and academic materials. Your task is to refine an existing summary based on newly provided document content.
+     Input:
+An existing partial or initial summary: {existing_answer}
+New additional content from the document:
+Copy
+Edit
+{context}
+Your tasks:
+Refine and improve the existing summary by incorporating relevant information from the additional document content. Ensure clarity, conciseness, and completeness while maintaining alignment with the original summary tone.
     
-    Below you find additional content from the document:
-    --------
-    {context}
-    --------
-    
-    Given the new context, refine the summary and example questions.
-    The document content will also be used as the basis for a question-and-answer bot.
-    Provide some examples of specific questions and answers that could be asked about the document. Ensure the questions are relevant and directly tied to the content.
-    If the new context isn't useful, return the original summary and questions.
-    
-    Total output will include:
-    1. A refined summary of the document.
-    2. A list of updated example questions and answers that could be asked about the document.
-    
-    SUMMARY AND QUESTIONS:
     `;
 
     const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);
