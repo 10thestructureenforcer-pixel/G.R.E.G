@@ -4,10 +4,26 @@ import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
 import { useChat } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+
+interface CaseSummary {
+  status: "PENDING" | "SUCCESS" | "FAILED";
+  caseFileId: string;
+}
+
+interface Case {
+  id: string;
+  title: string;
+  casesummary: CaseSummary;
+  createdAt: Date;
+}
 
 const UploadComponent = () => {
   const [file, setFile] = useState<FileList | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const {
     messages,
@@ -18,7 +34,78 @@ const UploadComponent = () => {
     api: "/api/summarize",
     streamProtocol: "data",
     credentials: "same-origin",
+    onFinish: () => {
+      queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
+        return old.map((case_) => {
+          if (case_.casesummary?.status === "PENDING") {
+            return {
+              ...case_,
+              casesummary: {
+                ...case_.casesummary,
+                status: "SUCCESS",
+              },
+            };
+          }
+          return case_;
+        });
+      });
+      router.refresh();
+    },
   });
+
+  const uploadMutation = useMutation({
+    mutationFn: async () => {
+      if (file) {
+        try {
+          setMessages([]);
+          await formSubmit(
+            {},
+            { allowEmptySubmit: true, experimental_attachments: file }
+          );
+        } catch (error) {
+          console.error("Error processing document:", error);
+          alert("Failed to process document. Please try again.");
+        }
+      }
+    },
+    onMutate: async () => {
+      // Create optimistic case
+      const optimisticCase = {
+        id: Date.now().toString(),
+        title: file?.[0]?.name || "Untitled Document",
+        casesummary: {
+          status: "PENDING",
+          caseFileId: Date.now().toString(),
+        },
+        createdAt: new Date(),
+      };
+
+      // Add to recent cases list
+      queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
+        return [optimisticCase, ...old];
+      });
+
+      return { optimisticCase };
+    },
+    onError: (err, newCase, context) => {
+      // Update status to FAILED on error
+      queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
+        return old.map((case_) => {
+          if (case_.id === context?.optimisticCase.id) {
+            return {
+              ...case_,
+              casesummary: {
+                ...case_.casesummary,
+                status: "FAILED",
+              },
+            };
+          }
+          return case_;
+        });
+      });
+    },
+  });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setMessages([]);
@@ -71,21 +158,8 @@ const UploadComponent = () => {
   };
 
   const handleSubmit = async () => {
-    if (file) {
-      try {
-        setMessages([]);
-
-        formSubmit(
-          {},
-          { allowEmptySubmit: true, experimental_attachments: file }
-        );
-      } catch (error) {
-        console.error("Error processing document:", error);
-        alert("Failed to process document. Please try again.");
-      }
-    } else {
-      alert("Please select a file first");
-    }
+    if (!file) return;
+    await uploadMutation.mutateAsync();
   };
 
   return (

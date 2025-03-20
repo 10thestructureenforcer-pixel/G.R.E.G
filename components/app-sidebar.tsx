@@ -56,33 +56,25 @@ export function AppSidebar() {
       variant="floating"
       className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-[url('/subtle-pattern.png')] bg-opacity-5"
     >
-      <SidebarHeader className="m-3 overflow-hidden rounded-xl bg-gradient-to-br from-green-50 to-white shadow-md border border-green-100 hover:shadow-lg transition-all duration-300">
-        <div className="flex items-center justify-start p-3 gap-3 group">
-          <div className="relative overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md">
+      <SidebarHeader className="overflow-hidden">
+        <div className="flex items-center p-2  ">
+          <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px]">
             <Image
-              src="/greg-logo.jpg"
+              src="/logos/greg_4.png"
               alt="logo"
-              width={50}
-              height={50}
-              className="rounded-lg group-hover:scale-105 transition-transform duration-300"
+              width={70}
+              height={70}
+              className="object-contain"
             />
-            <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-          </div>
-          <div>
-            <p className="font-bold text-2xl bg-gradient-to-r from-green-700 to-emerald-500 bg-clip-text text-transparent">
-              G.R.E.G
-            </p>
-            <p className="text-xs text-slate-500 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-1 group-hover:translate-y-0">
-              Legal AI Assistant
-            </p>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
           </div>
         </div>
       </SidebarHeader>
-      <SidebarSeparator className="mx-3 bg-green-100/50" />
-      <SidebarContent className="px-2">
+      <SidebarSeparator className="bg-green-100/50" />
+      <SidebarContent className="px-1">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="py-4">
+            <SidebarMenu className="py-1">
               {items.map((item) => {
                 const isActive =
                   pathname === item.url || pathname.startsWith(`${item.url}/`);
@@ -90,7 +82,7 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem
                     className={cn(
-                      "my-1.5 rounded-lg overflow-hidden transition-all p-2 duration-300",
+                      "my-1.5 rounded-lg overflow-hidden transition-all p-1  duration-300",
                       isActive
                         ? "bg-gradient-to-r from-green-50 to-green-50/20"
                         : "hover:bg-slate-50/80"

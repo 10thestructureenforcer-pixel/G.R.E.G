@@ -14,13 +14,12 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-full container ">
           <div className=" flex">
             <Image
-              src="https://static.vecteezy.com/system/resources/thumbnails/000/585/723/small/07-01.jpg"
+              src="/logos/greg_4.png"
               alt="logo"
-              width={100}
-              height={100}
-              className="w-28 -my-3 "
+              width={60}
+              height={60}
+              className="object-contain mx-2 p-2 w-[75px] h-[75px] md:w-[80px] md:h-[80px]"
             />
-            <p className="p-3 -mx-6 text-3xl font-semibold">G.R.E.G </p>
           </div>
           {session?.user ? (
             <Button
@@ -29,7 +28,7 @@ const Navbar = () => {
               }}
               type="button"
               variant="outline"
-              className="bg-green-400 h-9 shadow hidden md:block cursor-pointer"
+              className="bg-green-500 text-white hover:bg-green-600 h-9 shadow cursor-pointer -mx-2 mr-2"
             >
               Dashboard
             </Button>
@@ -41,7 +40,7 @@ const Navbar = () => {
                 }}
                 type="button"
                 variant="outline"
-                className="hover:bg-gray-50 h-9 shadow hidden md:block cursor-pointer"
+                className="hover:bg-green-50 hover:text-green-700 hover:border-green-200 h-9 shadow hidden md:block cursor-pointer mr-2"
               >
                 Log in
               </Button>
@@ -51,7 +50,7 @@ const Navbar = () => {
                   router.push("/sign-up");
                 }}
                 type="button"
-                className="bg-primary hover:bg-primary/80 h-9 cursor-pointer"
+                className="bg-green-500 text-white hover:bg-green-600 h-9 cursor-pointer mr-2"
               >
                 Signup
               </Button>
