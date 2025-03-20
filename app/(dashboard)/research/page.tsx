@@ -16,6 +16,10 @@ const page = async () => {
     include: {
       casesummary: true,
     },
+
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return (

@@ -88,6 +88,15 @@ export async function POST(request: NextRequest) {
     const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
     console.log(fileContent);
 
+    // Create initial CaseSummary record
+    await prisma.caseSummary.create({
+      data: {
+        status: "PENDING",
+        caseFileId: updatedsupabaseUrl.id,
+        summary: "",
+      },
+    });
+
     const llmSummary = new ChatOpenAI({
       model: "gpt-4o-mini",
       temperature: 0.3,
@@ -124,13 +133,16 @@ Refine and improve the existing summary by incorporating relevant information fr
       return LangChainAdapter.toDataStreamResponse(stream, {
         callbacks: {
           onFinal: async (completion) => {
-            await prisma.caseSummary.create({
+            await prisma.caseSummary.update({
               data: {
                 summary: completion,
-                caseFileId: updatedsupabaseUrl.id,
                 status: "SUCCESS",
               },
+              where: {
+                caseFileId: updatedsupabaseUrl.id,
+              },
             });
+            revalidatePath("/research");
           },
         },
       });
@@ -153,6 +165,40 @@ Refine and improve the existing summary by incorporating relevant information fr
     }
   } catch (error) {
     console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Failed to process request" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const url = new URL(request.url);
+    console.log("URL", url);
+
+    const caseId = url.searchParams.get("casefileId");
+    console.log("Event ID", caseId);
+
+    if (!caseId) {
+      throw new Error("Missing caseId");
+    }
+
+    const statusinfo = await prisma.caseSummary.findUnique({
+      where: {
+        caseFileId: caseId,
+      },
+      select: {
+        status: true,
+      },
+    });
+
+    return NextResponse.json({
+      status: 200,
+      statusinfo,
+    });
+  } catch (e) {
+    console.error("Error processing request:", e);
     return NextResponse.json(
       { error: "Failed to process request" },
       { status: 500 }
