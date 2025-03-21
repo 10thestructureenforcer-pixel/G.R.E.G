@@ -54,7 +54,7 @@ export function AppSidebar() {
   return (
     <Sidebar
       variant="floating"
-      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-[url('/subtle-pattern.png')] bg-opacity-5"
+      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  bg-opacity-5"
     >
       <SidebarHeader className="overflow-hidden">
         <div className="flex items-center p-2  ">

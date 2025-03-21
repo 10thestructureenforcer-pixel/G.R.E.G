@@ -1,8 +1,9 @@
-import UploadComponent from "@/components/dashboard/research/page";
+
 import React, { Suspense } from "react";
 import RecentCases from "@/components/dashboard/research/recent-cases";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
+import UploadComponent from "@/components/dashboard/research/upload-component";
 
 const page = async () => {
   const session = await auth();

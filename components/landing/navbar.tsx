@@ -2,24 +2,30 @@
 import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const pathname = usePathname();
+
+  const isDashboardRoute = pathname.startsWith("/dashboard");
+
   return (
     <div>
       <nav>
-        <div className="flex items-center justify-between w-full container ">
-          <div className=" flex">
-            <Image
-              src="/logos/greg_4.png"
-              alt="logo"
-              width={60}
-              height={60}
-              className="object-contain mx-2 p-2 w-[75px] h-[75px] md:w-[80px] md:h-[80px]"
-            />
+        <div className="flex items-center justify-between w-full container">
+          <div className="flex">
+            {!isDashboardRoute && (
+              <Image
+                src="/logos/greg_4.png"
+                alt="logo"
+                width={60}
+                height={60}
+                className="object-contain mx-2 p-2 w-[75px] h-[75px] md:w-[80px] md:h-[80px]"
+              />
+            )}
           </div>
           {session?.user ? (
             <Button
