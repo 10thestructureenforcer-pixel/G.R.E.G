@@ -2,9 +2,11 @@
 import { RecentCases, RecentCasesInterface } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { FileIcon, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const RecentCasesList = ({ recentCases }: RecentCasesInterface) => {
+  const router = useRouter();
   const { data, isLoading } = useQuery({
     queryKey: ["recentCases"],
     initialData: recentCases,
@@ -31,6 +33,9 @@ const RecentCasesList = ({ recentCases }: RecentCasesInterface) => {
             data.map((data: RecentCases) => (
               <div
                 key={data.id}
+                onClick={() => {
+                  router.push(`/research/${data.id}`);
+                }}
                 className="flex items-center p-4 bg-gray-50 rounded-md border border-gray-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-colors duration-200"
               >
                 <FileIcon className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
