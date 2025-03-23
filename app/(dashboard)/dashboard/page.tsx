@@ -1,22 +1,37 @@
-import ChatUI from "@/components/dashboard/main-dashboard/chat-ui";
+// import ChatUI from "@/components/dashboard/main-dashboard/chat-ui";
 import { auth } from "@/auth";
+import Cards from "@/components/dashboard/main-dashboard/cards";
 import { CardTitle, CardDescription } from "@/components/ui/card";
+import prisma from "@/lib/db";
 
 const page = async () => {
   const session = await auth();
   const userName = session?.user?.name || "User";
 
+  const totalCases = await prisma.caseFile.count({
+    where: {
+      uploadedBy: {
+        email: session?.user?.email,
+      },
+    },
+  });
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <CardTitle className="mb-2">Welcome back, {userName} 👋</CardTitle>
-        <CardDescription>
+    <div className="container mx-auto py-12 px-6 max-w-7xl">
+      <div className="mb-12">
+        <CardTitle className="mb-4 text-3xl">
+          Welcome back, {userName} 👋
+        </CardTitle>
+        <CardDescription className="text-lg">
           Ask me anything about legal cases and I&apos;ll help you find the
           information you need.
         </CardDescription>
       </div>
 
-      <ChatUI />
+      {/* <ChatUI /> */}
+      <div className="w-full">
+        <Cards totalCases={totalCases} />
+      </div>
     </div>
   );
 };

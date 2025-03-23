@@ -103,16 +103,24 @@ export async function POST(request: NextRequest) {
     });
 
     const summaryRefineTemplate = `
-  You are an expert in analyzing and summarizing complex documents, including legal, technical, and academic materials. Your task is to refine an existing summary based on newly provided document content.
-     Input:
-An existing partial or initial summary: {existing_answer}
-New additional content from the document:
-Copy
-Edit
-{context}
-Your tasks:
-Refine and improve the existing summary by incorporating relevant information from the additional document content. Ensure clarity, conciseness, and completeness while maintaining alignment with the original summary tone.
-    
+  You are an expert in analyzing and summarizing complex documents, including legal, technical, and academic materials. Your task is to refine and improve an existing summary based on newly provided content from the document.
+
+Input:
+
+Existing Partial or Initial Summary: {existing_answer}
+
+New Additional Content from the Document: {context}
+
+Instructions:
+Start sumamry by mentioning the citation at the top of summary and then continue with the summary.
+
+Review the existing summary and the new content provided.
+
+Incorporate relevant information from the new document content to improve the original summary.
+
+Ensure the final summary is clear, concise, and complete, maintaining the tone and focus of the original summary.
+
+Your goal is to provide a refined, well-organized summary that effectively communicates the essential details of the entire document, focusing on key points while maintaining a legal, technical, or academic tone. 
     `;
 
     const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);
@@ -142,7 +150,6 @@ Refine and improve the existing summary by incorporating relevant information fr
                 caseFileId: updatedsupabaseUrl.id,
               },
             });
-            revalidatePath("/research");
           },
         },
       });
