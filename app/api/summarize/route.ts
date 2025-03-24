@@ -121,6 +121,7 @@ Incorporate relevant information from the new document content to improve the or
 Ensure the final summary is clear, concise, and complete, maintaining the tone and focus of the original summary.
 
 Your goal is to provide a refined, well-organized summary that effectively communicates the essential details of the entire document, focusing on key points while maintaining a legal, technical, or academic tone. 
+Extarct Citation details from the document and start  with the citation details in the summary.
     `;
 
     const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);

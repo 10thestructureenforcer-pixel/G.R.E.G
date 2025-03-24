@@ -32,14 +32,14 @@ const items = [
     icon: Inbox,
   },
   {
-    title: "Guidance",
+    title: "Advanced Analysis",
     url: "/guidance",
-    icon: Calendar,
+    icon: Search,
   },
   {
-    title: "Chatbot",
-    url: "/chatbot",
-    icon: Search,
+    title: "Citation Lookup",
+    url: "/citation",
+    icon: Calendar,
   },
   {
     title: "Settings",
