@@ -7,13 +7,19 @@ const Hero = () => {
       <div className="flex flex-col items-center justify-center gap-y-10 text-center mt-20">
         <div className="flex flex-col gap-y-10">
           <h2 className="text-3xl md:text-6xl lg:text-7xl font-semibold md:w-2/3 mx-auto leading-none">
-            <span className="text-black">AI-Powered</span>{" "}
-            <span className="text-green-500">Legal Assistant</span>{" "}
-            <span className="text-black">for Criminal Defense Attorneys</span>
+            <span className="text-foreground">AI-Powered</span>{" "}
+            <span className="text-green-500 dark:text-green-400">
+              Legal Assistant
+            </span>{" "}
+            <span className="text-foreground">
+              for Criminal Defense Attorneys
+            </span>
           </h2>
           <p className="text-xl md:text-xl font-normal">
-            <span className="text-black">Research Faster,</span>{" "}
-            <span className="text-green-500">Win Cases</span>
+            <span className="text-foreground">Research Faster,</span>{" "}
+            <span className="text-green-500 dark:text-green-400">
+              Win Cases
+            </span>
           </p>
         </div>
         <div className="flex flex-col items-center gap-y-4">

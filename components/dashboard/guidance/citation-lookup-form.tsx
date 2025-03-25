@@ -88,26 +88,26 @@ const CitationLookupForm = () => {
                 <div className="space-y-8">
                   {data.map((result: any, index: number) => (
                     <div key={index} className="space-y-6">
-                      <div className="bg-gradient-to-r from-green-50 to-white p-6 rounded-xl border border-green-100 shadow-sm">
+                      <div className="bg-gradient-to-r from-green-50 to-white dark:from-green-950/20 dark:to-slate-900 p-6 rounded-xl border border-green-100 dark:border-green-800/30 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-semibold text-xl text-green-800">
+                          <h3 className="font-semibold text-xl text-green-800 dark:text-green-200">
                             Citation Information
                           </h3>
-                          <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                          <div className="px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full text-sm">
                             Result {index + 1}
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <p className="text-sm font-medium text-gray-600">
+                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                               Original Citation
                             </p>
-                            <p className="text-base text-gray-900 font-mono bg-gray-50 p-3 rounded-lg">
+                            <p className="text-base text-gray-900 dark:text-gray-100 font-mono bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
                               {result.citation}
                             </p>
                           </div>
                           <div className="space-y-2">
-                            <p className="text-sm font-medium text-gray-600">
+                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                               Normalized Citations
                             </p>
                             <div className="flex flex-wrap gap-2">
@@ -115,7 +115,7 @@ const CitationLookupForm = () => {
                                 (citation: string, idx: number) => (
                                   <span
                                     key={idx}
-                                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                                    className="px-3 py-1 bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 rounded-full text-sm"
                                   >
                                     {citation}
                                   </span>

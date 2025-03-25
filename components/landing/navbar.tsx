@@ -4,11 +4,13 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   const isDashboardRoute = pathname.startsWith("/dashboard");
 
@@ -16,17 +18,21 @@ const Navbar = () => {
     <div>
       <nav>
         <div className="flex items-center justify-between w-full container">
-          <div className="flex">
-            {!isDashboardRoute && (
+          {!isDashboardRoute && (
+            <div className="relative overflow-hidden group cursor-pointer w-[45px] h-[45px] md:w-[60px] md:h-[60px] bg-background rounded-lg m-2">
               <Image
-                src="/logos/greg_4.png"
+                src={
+                  theme === "dark" ? "/logos/greg_2.png" : "/logos/greg_2.png"
+                }
                 alt="logo"
-                width={60}
-                height={60}
-                className="object-contain mx-2 p-2 w-[75px] h-[75px] md:w-[80px] md:h-[80px]"
+                width={45}
+                height={45}
+                className="object-contain md:w-[60px] md:h-[60px]"
               />
-            )}
-          </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
+            </div>
+          )}
+
           {session?.user ? (
             <Button
               onClick={() => {

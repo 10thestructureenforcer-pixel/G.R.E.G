@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import CustomTrigger from "@/components/dashboard/custom-trigger";
+import { ModeToggle } from "@/components/mood-toggle";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function Layout({
@@ -32,9 +33,12 @@ export default async function Layout({
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500" />
               </Button>
             </div> */}
+            <div className="ml-auto">
+              <ModeToggle />
+            </div>
           </div>
         </header>
-        <div className="bg-gradient-to-b from-green-50/50 to-transparent h-2" />
+        <div className="bg-gradient-to-b from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent h-2" />
         {children}
       </main>
     </SidebarProvider>

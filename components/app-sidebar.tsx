@@ -1,5 +1,15 @@
 "use client";
-import { Calendar, Home, Inbox, Search, Settings, LogOut } from "lucide-react";
+import {
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  LogOut,
+  Compass,
+  Book,
+  BookUser,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +28,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 // Menu items.
 const items = [
@@ -27,22 +38,22 @@ const items = [
     icon: Home,
   },
   {
+    title: "Guidance",
+    url: "/guidance",
+    icon: Compass,
+  },
+  {
     title: "Research",
     url: "/research",
-    icon: Inbox,
+    icon: BookUser,
   },
   {
-    title: "Advanced Analysis",
-    url: "/guidance",
-    icon: Search,
-  },
-  {
-    title: "Citation Lookup",
+    title: "Ethics",
     url: "/citation",
     icon: Calendar,
   },
   {
-    title: "Settings",
+    title: "Governance",
     url: "/settings",
     icon: Settings,
   },
@@ -50,17 +61,18 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   return (
     <Sidebar
       variant="floating"
-      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  bg-opacity-5"
+      className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <SidebarHeader className="overflow-hidden">
-        <div className="flex items-center p-2  ">
-          <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px]">
+        <div className="flex items-center p-2">
+          <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px] bg-background rounded-lg">
             <Image
-              src="/logos/greg_4.png"
+              src={theme === "dark" ? "/logos/greg_2.png" : "/logos/greg_2.png"}
               alt="logo"
               width={70}
               height={70}
@@ -70,7 +82,7 @@ export function AppSidebar() {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarSeparator className="bg-green-100/50" />
+      <SidebarSeparator className="bg-border" />
       <SidebarContent className="px-1">
         <SidebarGroup>
           <SidebarGroupContent>
@@ -82,53 +94,43 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem
                     className={cn(
-                      "my-1.5 rounded-lg overflow-hidden transition-all p-1  duration-300",
-                      isActive
-                        ? "bg-gradient-to-r from-green-50 to-green-50/20"
-                        : "hover:bg-slate-50/80"
+                      "my-1.5 rounded-lg overflow-hidden transition-all p-1 duration-300",
+                      isActive ? "bg-accent" : "hover:bg-accent/50"
                     )}
                     key={item.title}
                   >
                     <SidebarMenuButton
-                      className="gap-4 px-3 p-2 py-2.5 transition-all duration-300 hover:translate-x-1"
+                      className="gap-4 px-3 p-2 py-2.5 transition-all duration-300 "
                       asChild
                       isActive={isActive}
                     >
                       <Link href={item.url} className="flex items-center">
-                        <div
+                        <item.icon
+                          size={18}
                           className={cn(
-                            " rounded-md transition-all p-2 duration-300",
+                            "transition-all duration-300",
                             isActive
-                              ? "bg-gradient-to-br from-green-200 to-emerald-100 text-green-800 shadow-sm"
-                              : "text-slate-500 hover:bg-slate-100/80"
+                              ? "stroke-primary"
+                              : "stroke-muted-foreground"
                           )}
-                        >
-                          <item.icon
-                            size={18}
-                            className={cn(
-                              "transition-all duration-300",
-                              isActive ? "stroke-green-800" : "stroke-slate-500"
-                            )}
-                            style={
-                              isActive
-                                ? {
-                                    fill: "rgba(147, 250, 165, 0.15)",
-                                    strokeWidth: 2,
-                                  }
-                                : { strokeWidth: 1.5 }
-                            }
-                          />
-                        </div>
+                          style={
+                            isActive
+                              ? {
+                                  strokeWidth: 2,
+                                }
+                              : { strokeWidth: 1.5 }
+                          }
+                        />
                         <span
                           className={cn(
                             "text-sm font-medium transition-all duration-300",
-                            isActive ? "text-green-800" : "text-slate-700"
+                            isActive ? "text-primary" : "text-muted-foreground"
                           )}
                         >
                           {item.title}
                         </span>
                         {isActive && (
-                          <div className="ml-auto h-6 w-1 rounded-full bg-gradient-to-b from-green-400 to-emerald-500 shadow-sm" />
+                          <div className="ml-auto h-6 w-1 rounded-full bg-primary" />
                         )}
                       </Link>
                     </SidebarMenuButton>
@@ -141,7 +143,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="mt-auto pb-4">
-        <SidebarSeparator className="mx-3 bg-green-100/50 mb-4" />
+        <SidebarSeparator className="mx-3 bg-border mb-4" />
         <div className="flex flex-col px-3 gap-3">
           {/* <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50/80 border border-slate-100">
             <Avatar className="h-9 w-9 border-2 border-white shadow-sm">
@@ -165,7 +167,7 @@ export function AppSidebar() {
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-sm bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors duration-300"
+            className="gap-2 text-sm hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors duration-300"
           >
             <LogOut size={14} />
             Sign Out

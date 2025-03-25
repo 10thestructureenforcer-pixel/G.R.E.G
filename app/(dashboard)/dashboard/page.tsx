@@ -17,12 +17,12 @@ const page = async () => {
   });
 
   return (
-    <div className="container mx-auto py-12 px-6 max-w-7xl">
-      <div className="mb-12">
-        <CardTitle className="mb-4 text-3xl">
+    <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
+      <div className="mb-8 md:mb-12">
+        <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back, {userName} 👋
         </CardTitle>
-        <CardDescription className="text-lg">
+        <CardDescription className="text-base md:text-lg">
           Ask me anything about legal cases and I&apos;ll help you find the
           information you need.
         </CardDescription>

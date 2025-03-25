@@ -3,9 +3,7 @@ import SearchCaseAnalysis from "@/components/dashboard/guidance/search-case-anal
 
 const Page = () => {
   return (
-    <div className="container mx-auto p-6">
-      <SearchCaseAnalysis />
-    </div>
+    <div className="container mx-auto p-6">{/* <SearchCaseAnalysis /> */}</div>
   );
 };
 
