@@ -14,12 +14,14 @@ const page = () => {
       <CardHeader>
         <CardTitle className="text-2xl">Sign Up</CardTitle>
         <CardDescription>
-          We currently only support Google sign Up. Please use the button below
+          We currently only support Google,LinkedIn sign up.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          <SigninButton />
+          <SigninButton provider="google" image="/google.png" />
+          <p className="text-center">or</p>
+          <SigninButton provider="linkedin" image="/linkedin.png" />
         </div>
       </CardContent>
     </Card>

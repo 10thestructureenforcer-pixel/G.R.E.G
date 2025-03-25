@@ -5,9 +5,15 @@ import React from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 
-const SigninButton = () => {
+const SigninButton = ({
+  provider,
+  image,
+}: {
+  provider: string;
+  image: string;
+}) => {
   async function handleSignIn() {
-    await signIn("google", { redirectTo: "/dashboard" });
+    await signIn(provider, { redirectTo: "/dashboard" });
   }
 
   return (
@@ -20,11 +26,11 @@ const SigninButton = () => {
         Sign Up with{" "}
         <span>
           <Image
-            src={"/google.png"}
-            className="ml-2 object-cover"
-            alt="google"
-            width={24}
-            height={24}
+            src={image}
+            className=" object-cover"
+            alt={image == "/logos/google.png" ? "google" : "linkedin"}
+            width={22}
+            height={22}
           />
         </span>
       </Button>
