@@ -22,3 +22,12 @@ export type STATUS = "SUCCESS" | "FAILED" | "PENDING";
 export interface RecentCasesInterface {
   recentCases: RecentCases[];
 }
+
+
+
+export interface Session {
+  user: {
+    id: string;
+    email: string;
+  };
+}

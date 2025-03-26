@@ -9,6 +9,9 @@ import {
   Compass,
   Book,
   BookUser,
+  Scale,
+  Notebook,
+  NotebookTabs,
 } from "lucide-react";
 import {
   Sidebar,
@@ -45,15 +48,20 @@ const items = [
   {
     title: "Research",
     url: "/research",
-    icon: BookUser,
+    icon: NotebookTabs,
   },
   {
     title: "Ethics",
     url: "/citation",
-    icon: Calendar,
+    icon: Scale,
   },
   {
     title: "Governance",
+    url: "/governance",
+    icon: BookUser,
+  },
+  {
+    title: "Settings",
     url: "/settings",
     icon: Settings,
   },
@@ -110,7 +118,7 @@ export function AppSidebar() {
                           className={cn(
                             "transition-all duration-300",
                             isActive
-                              ? "stroke-primary"
+                              ? "stroke-green-500 dark:stroke-green-400"
                               : "stroke-muted-foreground"
                           )}
                           style={
@@ -124,13 +132,15 @@ export function AppSidebar() {
                         <span
                           className={cn(
                             "text-sm font-medium transition-all duration-300",
-                            isActive ? "text-primary" : "text-muted-foreground"
+                            isActive
+                              ? "text-green-500 dark:text-green-400"
+                              : "text-muted-foreground"
                           )}
                         >
                           {item.title}
                         </span>
                         {isActive && (
-                          <div className="ml-auto h-6 w-1 rounded-full bg-primary" />
+                          <div className="ml-auto h-6 w-1 rounded-full bg-green-500 dark:bg-green-400" />
                         )}
                       </Link>
                     </SidebarMenuButton>

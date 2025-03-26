@@ -33,7 +33,7 @@ export default async function Layout({
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500" />
               </Button>
             </div> */}
-            <div className="ml-auto">
+            <div className="ml-auto mr-4">
               <ModeToggle />
             </div>
           </div>
