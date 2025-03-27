@@ -83,7 +83,7 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
   });
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
+    <div className="flex flex-col h-[calc(100vh-5rem)] bg-background">
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
           <div className="flex-1 overflow-hidden -mx-10">
