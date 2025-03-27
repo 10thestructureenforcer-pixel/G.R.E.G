@@ -1,0 +1,10 @@
+model Message {
+  id           String   @id @unique
+  tool_call_id String?
+  createdAt    DateTime @default(now())
+  content      String
+  role         String
+  name         String?
+  chatId       String
+  Chat         Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}

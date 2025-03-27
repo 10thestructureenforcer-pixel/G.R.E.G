@@ -1,0 +1,14 @@
+model Client {
+    id String @id @default(uuid())
+    clientFirstName String
+    clientLastName String
+    clientEmail String  @unique 
+    clientAddress String
+    nationality String
+    visaStatus String
+    legalConcern String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId String
+    user User @relation(fields: [userId], references: [id])
+}

@@ -52,9 +52,12 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
+  isPro         Boolean   @default(false)
   accounts      Account[]
   sessions      Session[] 
   case_file     CaseFile[]
+  chat          Chat[]
+  client        Client[]
  
   @@map("users")
 }
