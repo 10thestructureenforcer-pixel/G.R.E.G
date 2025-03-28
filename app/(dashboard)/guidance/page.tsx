@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import Chat from "@/components/dashboard/guidance/chat";
 import { Session } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 import React, { Suspense } from "react";
 // import SearchCaseAnalysis from "@/components/dashboard/guidance/search-case-analysis";
@@ -19,7 +20,13 @@ const ChatMessage = async () => {
 const Page = () => {
   return (
     <div className=" bg-white dark:bg-transparent ">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        }
+      >
         <ChatMessage />
       </Suspense>
     </div>

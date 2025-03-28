@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import RecentCases from "@/components/dashboard/research/recent-cases";
 import prisma from "@/lib/db";
@@ -27,12 +26,12 @@ const page = async () => {
     <div className="p-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg  p-5 mb-6">
+          <div className="bg-background dark:bg-background/95 rounded-lg p-5 mb-6">
             <UploadComponent />
           </div>
         </div>
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm p-5 sticky top-24">
+          <div className="bg-background dark:bg-background/95 rounded-lg shadow-sm p-5 sticky top-24">
             <Suspense fallback={<div>Loading recent cases...</div>}>
               <RecentCases recentCases={recentCases} />
             </Suspense>

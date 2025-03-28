@@ -1,7 +1,21 @@
+"use client";
 import React from "react";
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Hero = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const handleClick = () => {
+    if (session) {
+      router.push("/dashboard");
+    } else {
+      router.push("/sign-up");
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center gap-y-10 text-center mt-20">
@@ -27,7 +41,9 @@ const Hero = () => {
                 Try Free {` `}
                 <ArrowUpRight className="text-primary" />
             </button> */}
-          <InteractiveHoverButton>Get Started</InteractiveHoverButton>
+          <InteractiveHoverButton onClick={handleClick}>
+            Get Started
+          </InteractiveHoverButton>
         </div>
       </div>
     </div>

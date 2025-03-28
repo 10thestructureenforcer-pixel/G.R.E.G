@@ -20,13 +20,13 @@ const UserMessage = ({
   index: number;
 }) => {
   return (
-    <div className="group relative flex gap-4 px-4 py-3 sm:px-6">
-      <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-blue-100 dark:bg-gray-800">
-        <User2Icon className="h-4 w-4 text-blue-600 dark:text-green-400" />
+    <div className="group relative flex gap-2 sm:gap-4 px-2 sm:px-4 py-2 sm:py-3 sm:px-6">
+      <div className="flex h-6 w-6 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-blue-100 dark:bg-gray-800">
+        <User2Icon className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-green-400" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl bg-blue-50 dark:bg-stone-800/50 px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="prose dark:prose-invert break-words max-w-full text-base leading-relaxed text-gray-800 dark:text-gray-200">
+        <div className="rounded-2xl bg-blue-50 dark:bg-stone-800/50 px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="prose dark:prose-invert break-words max-w-full text-sm sm:text-base leading-relaxed text-gray-800 dark:text-gray-200">
             <MemoizedMarkdown content={content} id={`user-${index}`} />
           </div>
         </div>
@@ -45,10 +45,10 @@ const BotMessage = ({
   index: number;
 }) => {
   return (
-    <div className="group relative flex gap-4 px-4 py-3 sm:px-6">
-      <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+    <div className="group relative flex gap-2 sm:gap-4 px-2 sm:px-4 py-2 sm:py-3 sm:px-6">
+      <div className="flex h-6 w-6 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
         <svg
-          className="w-4 h-4 text-gray-600 dark:text-green-400"
+          className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 dark:text-green-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -62,8 +62,8 @@ const BotMessage = ({
         </svg>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl bg-gray-50 dark:bg-zinc-800 px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="prose dark:prose-invert break-words max-w-full text-base leading-relaxed text-gray-800 dark:text-gray-200">
+        <div className="rounded-2xl bg-gray-50 dark:bg-zinc-800 px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="prose dark:prose-invert break-words max-w-full text-sm sm:text-base leading-relaxed text-gray-800 dark:text-gray-200">
             <MemoizedMarkdown content={content} id={`bot-${index}`} />
           </div>
           {status === "streaming" && (
@@ -95,17 +95,44 @@ const ChatMessage = ({
   className,
 }: ChatMessageProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isUserScrolling = useRef(false);
+  const lastScrollTop = useRef(0);
 
   const scrollToBottom = () => {
-    if (messagesEndRef.current && containerRef.current) {
+    if (
+      messagesEndRef.current &&
+      containerRef.current &&
+      !isUserScrolling.current
+    ) {
       const container = containerRef.current;
-      container.scrollTop = container.scrollHeight;
-      messagesEndRef.current.scrollIntoView({
-        behavior: "instant",
-        block: "start",
-      });
+      const isNearBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight <
+        100;
+
+      if (isNearBottom) {
+        container.scrollTop = container.scrollHeight;
+        messagesEndRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }
+    }
+  };
+
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const { scrollTop } = containerRef.current;
+      const isScrollingUp = scrollTop < lastScrollTop.current;
+
+      if (isScrollingUp) {
+        isUserScrolling.current = true;
+        setTimeout(() => {
+          isUserScrolling.current = false;
+        }, 1000);
+      }
+
+      lastScrollTop.current = scrollTop;
     }
   };
 
@@ -113,15 +140,10 @@ const ChatMessage = ({
     if (status === "streaming") {
       const scroll = () => {
         scrollToBottom();
-        scrollRef.current = setTimeout(scroll, 50);
       };
-      scrollRef.current = setTimeout(scroll, 50);
 
-      return () => {
-        if (scrollRef.current) {
-          clearTimeout(scrollRef.current);
-        }
-      };
+      const scrollInterval = setInterval(scroll, 100);
+      return () => clearInterval(scrollInterval);
     }
   }, [status]);
 
@@ -130,10 +152,11 @@ const ChatMessage = ({
   }, [messages]);
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full ">
       <div
         ref={containerRef}
-        className={`flex flex-col min-h-full max-w-3xl mx-auto ${
+        onScroll={handleScroll}
+        className={`flex flex-col min-h-full max-w-3xl mx-auto  ${
           className || ""
         }`}
       >

@@ -23,6 +23,8 @@ import * as z from "zod";
 import React from "react";
 import { formSubmit } from "@/actions/form-submit";
 import { useRouter } from "next/navigation";
+import ViewClients from "./view-clients";
+import toast from "react-hot-toast";
 
 const clientFormSchema = z.object({
   clientFirstName: z
@@ -60,11 +62,11 @@ const ClientInfoButton = () => {
     console.log(data);
     const res = await formSubmit(data);
     if (res.status == "success") {
-      alert(res.message);
+      toast.success(res.message);
       setOpen(false);
       router.refresh();
     } else {
-      alert(res.message);
+      toast.error(res.message);
     }
   }
 
@@ -193,9 +195,7 @@ const ClientInfoButton = () => {
           </Form>
         </DialogContent>
       </Dialog>
-      <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 dark:text-black transition-colors duration-200 w-full sm:w-auto cursor-pointer">
-        View Clients
-      </Button>
+      <ViewClients />
     </div>
   );
 };

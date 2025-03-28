@@ -80,13 +80,17 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
     body: {
       clientInfo,
     },
+    id: id,
+    onFinish: (done) => {
+      console.log(done);
+    },
   });
 
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)] bg-background">
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
-          <div className="flex-1 overflow-hidden -mx-10">
+          <div className="flex-1 overflow-hidden px-4 md:px-0 md:-mx-10">
             <ChatMessage
               messages={messages}
               status={status}
@@ -98,8 +102,8 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
       </div>
 
       <div className="">
-        <div className="w-full max-w-3xl mx-auto p-4">
-          <div className="flex items-center gap-4 mb-4">
+        <div className="w-full max-w-3xl mx-auto p-2 md:p-4">
+          <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-4">
             <div className="flex-1">
               <PredefinedPrompts
                 dropdownText={dropdownText}
@@ -111,27 +115,28 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-10 w-10 hover:cursor-pointer"
+                  className="h-8 w-8 md:h-10 md:w-10 hover:cursor-pointer"
                 >
                   {isClientSelected ? (
-                    <span className="text-sm font-medium">
+                    <span className="text-xs md:text-sm font-medium">
                       {clientInfo.clientFirstName.charAt(0)}
                       {""}
                       {clientInfo.clientLastName.charAt(0)}
                     </span>
                   ) : (
-                    <User2Icon className="h-4 w-4" />
+                    <User2Icon className="h-3 w-3 md:h-4 md:w-4" />
                   )}
                   <span className="sr-only">Open client list</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="p-0 max-w-3xl">
+              <DialogContent className="p-0 max-w-[95vw] md:max-w-3xl">
                 <DialogTitle className="sr-only">Select Client</DialogTitle>
                 <ClientList onClientSelect={handleClientSelect} />
               </DialogContent>
             </Dialog>
           </div>
           <PromptForm
+            id={id}
             append={append}
             session={session}
             handleSubmit={handleSubmit}

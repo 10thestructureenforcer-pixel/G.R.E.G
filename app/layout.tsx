@@ -4,6 +4,7 @@ import "./globals.css";
 import SessionWrapper from "@/components/wrappers/session-wrapper";
 import QueryClientContextProvider from "@/lib/providers/QueryProvider";
 import { ThemeProvider } from "@/lib/providers/theme-provider";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster />
             <SessionWrapper>{children}</SessionWrapper>
           </ThemeProvider>
         </QueryClientContextProvider>

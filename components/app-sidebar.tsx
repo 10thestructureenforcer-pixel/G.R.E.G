@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
+import { signOut } from "next-auth/react";
 
 // Menu items.
 const items = [
@@ -52,7 +53,7 @@ const items = [
   },
   {
     title: "Ethics",
-    url: "/citation",
+    url: "/ethics",
     icon: Scale,
   },
   {
@@ -177,7 +178,8 @@ export function AppSidebar() {
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-sm hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors duration-300"
+            className="gap-2 text-sm hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors duration-300 cursor-pointer"
+            onClick={() => signOut({ redirectTo: "/" })}
           >
             <LogOut size={14} />
             Sign Out

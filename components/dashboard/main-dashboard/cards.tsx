@@ -26,7 +26,7 @@ const Cards = ({ totalCases }: { totalCases: number }) => {
         </div>
       </div>
 
-      <div className="bg-card rounded-xl shadow-sm p-6 border border-border hover:shadow-md transition-all duration-300">
+      {/* <div className="bg-card rounded-xl shadow-sm p-6 border border-border hover:shadow-md transition-all duration-300">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">
@@ -44,7 +44,7 @@ const Cards = ({ totalCases }: { totalCases: number }) => {
             <span>Legal Citations</span>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

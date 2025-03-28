@@ -17,9 +17,9 @@ const Navbar = () => {
   return (
     <div>
       <nav>
-        <div className="flex items-center justify-between w-full container">
+        <div className="flex items-center justify-between w-full h-14 container">
           {!isDashboardRoute && (
-            <div className="relative overflow-hidden group cursor-pointer w-[45px] h-[45px] md:w-[60px] md:h-[60px] bg-background rounded-lg m-2">
+            <div className="relative overflow-hidden group cursor-pointer w-[45px] h-[45px] md:w-[60px] md:h-[60px] bg-background rounded-md mt-3 ml-2">
               <Image
                 src={
                   theme === "dark" ? "/logos/greg_2.png" : "/logos/greg_2.png"
@@ -27,7 +27,7 @@ const Navbar = () => {
                 alt="logo"
                 width={45}
                 height={45}
-                className="object-contain md:w-[60px] md:h-[60px]"
+                className="object-contain md:w-[60px] md:h-[60px]  "
               />
               <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
             </div>
@@ -40,7 +40,7 @@ const Navbar = () => {
               }}
               type="button"
               variant="outline"
-              className="bg-green-500 text-white hover:bg-green-600 h-9 shadow cursor-pointer -mx-2 mr-2"
+              className="dark:bg-green-500 text-white hover:bg-green-600 h-9 shadow cursor-pointer -mx-2 mr-2"
             >
               Dashboard
             </Button>

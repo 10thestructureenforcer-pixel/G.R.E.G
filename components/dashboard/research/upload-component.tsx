@@ -6,6 +6,8 @@ import { useChat } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import AnimatedQuotes from "./animated-quotes";
 
 interface CaseSummary {
   status: "PENDING" | "SUCCESS" | "FAILED";
@@ -121,7 +123,7 @@ const UploadComponent = () => {
       ) {
         setFile(selectedFile);
       } else {
-        alert("Only PDF, DOCX, and TXT files are allowed");
+        toast.error("Only PDF, DOCX, and TXT files are allowed");
         e.target.value = "";
       }
     }
@@ -152,7 +154,7 @@ const UploadComponent = () => {
       ) {
         setFile(droppedFile);
       } else {
-        alert("Only PDF, DOCX, and TXT files are allowed");
+        toast.error("Only PDF, DOCX, and TXT files are allowed");
       }
     }
   };
@@ -165,13 +167,17 @@ const UploadComponent = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="w-full">
-        <h1 className="text-2xl font-medium mb-6">Research Documents</h1>
+        <h1 className="text-2xl font-medium mb-6 text-foreground">
+          Research Documents
+        </h1>
 
         <div className="mb-8">
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center ${
-              isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
-            } ${file ? "bg-green-50" : ""}`}
+              isDragging
+                ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                : "border-gray-300 dark:border-gray-700"
+            } ${file ? "bg-green-50 dark:bg-green-950/20" : ""}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -187,58 +193,65 @@ const UploadComponent = () => {
             <label htmlFor="file-upload" className="cursor-pointer">
               {file ? (
                 <div className="flex flex-col items-center">
-                  <FiFile className="text-5xl text-green-600 mb-2" />
-                  <p className="text-green-600 font-medium">{file[0].name}</p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <FiFile className="text-5xl text-green-600 dark:text-green-400 mb-2" />
+                  <p className="text-green-600 dark:text-green-400 font-medium">
+                    {file[0].name}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     {(file[0].size / 1024 / 1024).toFixed(2)} MB · PDF
                   </p>
-                  <p className="text-xs text-blue-500 mt-4 underline">
+                  <p className="text-xs text-blue-500 dark:text-blue-400 mt-4 underline">
                     Click to change file
                   </p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
-                  <FiUpload className="text-5xl text-gray-400 mb-2" />
-                  <p className="font-medium">
+                  <FiUpload className="text-5xl text-gray-400 dark:text-gray-600 mb-2" />
+                  <p className="font-medium text-foreground">
                     Drag and drop your PDF here or click to browse
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Only PDF files are supported
                   </p>
                 </div>
               )}
             </label>
           </div>
-          <p className="text-red-500 text-sm mt-2 text-center">
+          <p className="text-red-500 dark:text-red-400 text-sm mt-2 text-center">
             * Only PDF, DOCX, and TXT files are allowed
           </p>
         </div>
 
         <div className="flex justify-center">
-          <button
-            onClick={handleSubmit}
-            disabled={!file || status === "submitted" || status === "streaming"}
-            className={`px-6 py-3 rounded-md font-medium transition-colors cursor-pointer ${
-              file
-                ? "bg-blue-600 hover:bg-blue-700 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            {status === "submitted" || status === "streaming"
-              ? "Processing..."
-              : file
-              ? "Process Document"
-              : "Upload a File First"}
-          </button>
+          <div className="flex flex-col items-center gap-4">
+            <button
+              onClick={handleSubmit}
+              disabled={
+                !file || status === "submitted" || status === "streaming"
+              }
+              className={`px-6 py-3 rounded-md font-medium transition-colors ${
+                file && !(status === "submitted" || status === "streaming")
+                  ? "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white cursor-pointer"
+                  : "bg-transparent dark:bg-blue-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {file ? "Process Document" : "Upload a File First"}
+            </button>
+            {(status === "submitted" || status === "streaming") && (
+              <div className="mt-2">
+                <AnimatedQuotes />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="w-full bg-white  p-5 overflow-hidden flex flex-col">
-        <h2 className="text-xl font-semibold mb-5 text-gray-800">Summary</h2>
-        <div className="p-6 bg-gray-50 rounded-md border min-h-[300px] flex-grow overflow-auto">
+      <div className="w-full bg-background p-5 overflow-hidden flex flex-col">
+        <h2 className="text-xl font-semibold mb-5 text-foreground">Summary</h2>
+        <div className="p-6 bg-muted dark:bg-muted/50 rounded-md border min-h-[300px] flex-grow overflow-auto">
           {messages &&
           messages.filter((data) => data.role === "assistant").length > 0 ? (
-            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-headings:mb-2 prose-headings:mt-4 text-black prose-pre:p-0 max-w-full">
+            <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-headings:mb-2 prose-headings:mt-4 text-foreground prose-pre:p-0 max-w-full">
               <ReactMarkdown>
                 {
                   messages.filter((data) => data.role === "assistant")[0]
@@ -248,11 +261,11 @@ const UploadComponent = () => {
             </div>
           ) : (
             <div className="text-center">
-              <FileIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 mb-2">
+              <FileIcon className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-600 dark:text-gray-400 mb-2">
                 Select a document to view its summary
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-500">
                 Upload a new document or choose from recent files
               </p>
             </div>

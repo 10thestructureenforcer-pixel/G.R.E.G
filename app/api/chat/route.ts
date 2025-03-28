@@ -1,4 +1,3 @@
-import perplexity from "@/lib/providers/perplexity";
 import { streamText, UIMessage } from "ai";
 import { openai } from "@ai-sdk/openai";
 

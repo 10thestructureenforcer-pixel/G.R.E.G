@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 
 interface PromptFormProps {
+  id: string;
   append: (message: Message) => void;
   session: Session;
   handleSubmit: () => void;
@@ -28,6 +29,7 @@ interface PromptFormProps {
 }
 
 const PromptForm = ({
+  id,
   append,
   session,
   handleSubmit,
@@ -43,7 +45,6 @@ const PromptForm = ({
   const isDisabled = status === "streaming";
 
   const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
     if (
       clientInfo.nationality === "" ||
       clientInfo.visaStatus === "" ||
@@ -52,7 +53,7 @@ const PromptForm = ({
       alert("Please fill in all fields");
       return;
     }
-
+    window.history.replaceState({}, "", `/guidance/${id}`);
     handleSubmit();
   };
 
@@ -68,6 +69,7 @@ const PromptForm = ({
         return;
       }
       if (!isDisabled && input.trim()) {
+        window.history.replaceState({}, "", `/guidance/${id}`);
         handleSubmit();
       }
     }
