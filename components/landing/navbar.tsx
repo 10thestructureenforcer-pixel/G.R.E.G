@@ -40,7 +40,7 @@ const Navbar = () => {
               }}
               type="button"
               variant="outline"
-              className="dark:bg-green-500 text-white hover:bg-green-600 h-9 shadow cursor-pointer -mx-2 mr-2"
+              className="dark:bg-green-500 bg-green-500 text-black hover:bg-green-600 h-9 shadow cursor-pointer -mx-2 mr-2"
             >
               Dashboard
             </Button>
