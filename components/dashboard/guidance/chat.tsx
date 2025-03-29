@@ -4,17 +4,9 @@ import { Message } from "ai";
 import React, { useState } from "react";
 import ChatMessage from "./chat-message";
 import PromptForm from "./prompt-form";
-import PredefinedPrompts from "./predefined-prompts";
 import { useChat } from "@ai-sdk/react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { User2Icon } from "lucide-react";
-import ClientList from "./client-list";
+import HistoryAndNewChat from "./history-new-chat";
+import WelcomeMessage from "./welcome-message";
 
 interface Client {
   id: string;
@@ -49,10 +41,10 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
     clientAddress: "",
   });
   const [isClientSelected, setIsClientSelected] = useState(false);
-
   const [dropdownText, setDropdownText] = useState(
     "Select a predefined prompt"
   );
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleClientSelect = (client: Client) => {
     setClientInfo((prev) => ({
@@ -79,6 +71,7 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
     api: "/api/chat",
     body: {
       clientInfo,
+      chatId: id,
     },
     id: id,
     onFinish: (done) => {
@@ -87,67 +80,47 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
   });
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5rem)] bg-background">
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full flex flex-col">
-          <div className="flex-1 overflow-hidden px-4 md:px-0 md:-mx-10">
-            <ChatMessage
-              messages={messages}
-              status={status}
+    <>
+      <HistoryAndNewChat />
+
+      <div className="flex flex-col h-[calc(100vh-10rem)] bg-background">
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-hidden px-0 sm:px-4 md:px-0 md:-mx-10">
+              {messages.length === 0 ? (
+                <WelcomeMessage />
+              ) : (
+                <ChatMessage
+                  messages={messages}
+                  status={status}
+                  session={session}
+                  className="text-foreground dark:text-gray-200"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="relative bg-transparent">
+          <div className="bg-transparent max-w-3xl mx-auto p-2">
+            <PromptForm
+              id={id}
+              append={append}
               session={session}
-              className="text-foreground dark:text-gray-200"
+              handleSubmit={handleSubmit}
+              status={status}
+              input={input}
+              setInput={setInput}
+              clientInfo={clientInfo}
+              dropdownText={dropdownText}
+              onPromptSelect={handlePromptSelect}
+              onClientSelect={handleClientSelect}
+              isClientSelected={isClientSelected}
             />
           </div>
         </div>
       </div>
-
-      <div className="">
-        <div className="w-full max-w-3xl mx-auto p-2 md:p-4">
-          <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-4">
-            <div className="flex-1">
-              <PredefinedPrompts
-                dropdownText={dropdownText}
-                onPromptSelect={handlePromptSelect}
-              />
-            </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 md:h-10 md:w-10 hover:cursor-pointer"
-                >
-                  {isClientSelected ? (
-                    <span className="text-xs md:text-sm font-medium">
-                      {clientInfo.clientFirstName.charAt(0)}
-                      {""}
-                      {clientInfo.clientLastName.charAt(0)}
-                    </span>
-                  ) : (
-                    <User2Icon className="h-3 w-3 md:h-4 md:w-4" />
-                  )}
-                  <span className="sr-only">Open client list</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="p-0 max-w-[95vw] md:max-w-3xl">
-                <DialogTitle className="sr-only">Select Client</DialogTitle>
-                <ClientList onClientSelect={handleClientSelect} />
-              </DialogContent>
-            </Dialog>
-          </div>
-          <PromptForm
-            id={id}
-            append={append}
-            session={session}
-            handleSubmit={handleSubmit}
-            status={status}
-            input={input}
-            setInput={setInput}
-            clientInfo={clientInfo}
-          />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

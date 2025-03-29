@@ -38,7 +38,7 @@ const ViewClients = () => {
           View Clients
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] dark:border-white border-black/30 dark:border-black/50">
+      <DialogContent className="sm:max-w-[500px] border-black/30 dark:border-black/50">
         <DialogHeader className="pb-2 border-b-2 border-black/20 dark:border-black/40">
           <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
             Client List

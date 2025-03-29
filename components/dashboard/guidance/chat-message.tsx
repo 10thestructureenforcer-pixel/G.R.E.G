@@ -20,13 +20,13 @@ const UserMessage = ({
   index: number;
 }) => {
   return (
-    <div className="group relative flex gap-2 sm:gap-4 px-2 sm:px-4 py-2 sm:py-3 sm:px-6">
-      <div className="flex h-6 w-6 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-blue-100 dark:bg-gray-800">
-        <User2Icon className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-green-400" />
+    <div className="group relative flex gap-1.5  sm:gap-4 px-0 sm:px-4 py-1.5 sm:py-3">
+      <div className="flex h-5 w-5 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-blue-100  dark:bg-gray-800">
+        <User2Icon className="h-2.5 w-2.5 sm:h-4 sm:w-4 text-blue-600 dark:text-green-400" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl bg-blue-50 dark:bg-stone-800/50 px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="prose dark:prose-invert break-words max-w-full text-sm sm:text-base leading-relaxed text-gray-800 dark:text-gray-200">
+        <div className="rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-stone-800/50 px-2 sm:px-4 py-1.5 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700 w-64 sm:w-full">
+          <div className="prose text-wrap dark:prose-invert break-words  text-xs sm:text-base leading-relaxed text-gray-800 dark:text-gray-200">
             <MemoizedMarkdown content={content} id={`user-${index}`} />
           </div>
         </div>
@@ -45,10 +45,10 @@ const BotMessage = ({
   index: number;
 }) => {
   return (
-    <div className="group relative flex gap-2 sm:gap-4 px-2 sm:px-4 py-2 sm:py-3 sm:px-6">
-      <div className="flex h-6 w-6 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+    <div className="group relative flex gap-1.5 sm:gap-4 px-0 sm:px-4 py-1.5 sm:py-3">
+      <div className="flex h-5 w-5 sm:h-8 sm:w-8 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
         <svg
-          className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 dark:text-green-400"
+          className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-gray-600 dark:text-green-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -62,22 +62,24 @@ const BotMessage = ({
         </svg>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl bg-gray-50 dark:bg-zinc-800 px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="prose dark:prose-invert break-words max-w-full text-sm sm:text-base leading-relaxed text-gray-800 dark:text-gray-200">
-            <MemoizedMarkdown content={content} id={`bot-${index}`} />
+        <div className="rounded-xl sm:rounded-2xl bg-gray-50 dark:bg-zinc-800 px-2 sm:px-4 py-1.5 sm:py-3 shadow-sm border border-gray-100 dark:border-gray-700 w-64 sm:w-full">
+          <div className="overflow-x-auto">
+            <div className="prose dark:prose-invert break-words text-xs sm:text-base leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+              <MemoizedMarkdown content={content} id={`bot-${index}`} />
+            </div>
           </div>
           {status === "streaming" && (
-            <div className="flex gap-1.5 mt-3">
+            <div className="flex gap-1 mt-2 sm:mt-3">
               <div
-                className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
                 style={{ animationDelay: "0ms" }}
               />
               <div
-                className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
                 style={{ animationDelay: "150ms" }}
               />
               <div
-                className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
                 style={{ animationDelay: "300ms" }}
               />
             </div>
@@ -152,11 +154,11 @@ const ChatMessage = ({
   }, [messages]);
 
   return (
-    <ScrollArea className="h-full ">
+    <ScrollArea className="h-full">
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className={`flex flex-col min-h-full max-w-3xl mx-auto  ${
+        className={`flex flex-col min-h-full w-full max-w-3xl mx-auto px-1 sm:px-0 ${
           className || ""
         }`}
       >
