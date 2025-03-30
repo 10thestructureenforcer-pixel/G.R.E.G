@@ -89,8 +89,12 @@ const PromptForm = ({
       toast.error("Please fill in all fields");
       return;
     }
-    window.history.replaceState({}, "", `/guidance/${id}`);
-    handleSubmit();
+    if (!isDisabled && input.trim()) {
+      e.preventDefault();
+      const newUrl = `/guidance/${id}`;
+      window.history.pushState({}, "", newUrl);
+      handleSubmit();
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -105,7 +109,8 @@ const PromptForm = ({
         return;
       }
       if (!isDisabled && input.trim()) {
-        window.history.replaceState({}, "", `/guidance/${id}`);
+        const newUrl = `/guidance/${id}`;
+        window.history.pushState({}, "", newUrl);
         handleSubmit();
       }
     }

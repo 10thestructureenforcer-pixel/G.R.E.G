@@ -180,36 +180,36 @@ Extarct Citation details from the document and start  with the citation details 
   }
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const url = new URL(request.url);
-    console.log("URL", url);
+// export async function GET(request: NextRequest) {
+//   try {
+//     const url = new URL(request.url);
+//     console.log("URL", url);
 
-    const caseId = url.searchParams.get("casefileId");
-    console.log("Event ID", caseId);
+//     const caseId = url.searchParams.get("casefileId");
+//     console.log("Event ID", caseId);
 
-    if (!caseId) {
-      throw new Error("Missing caseId");
-    }
+//     if (!caseId) {
+//       throw new Error("Missing caseId");
+//     }
 
-    const statusinfo = await prisma.caseSummary.findUnique({
-      where: {
-        caseFileId: caseId,
-      },
-      select: {
-        status: true,
-      },
-    });
+//     const statusinfo = await prisma.caseSummary.findUnique({
+//       where: {
+//         caseFileId: caseId,
+//       },
+//       select: {
+//         status: true,
+//       },
+//     });
 
-    return NextResponse.json({
-      status: 200,
-      statusinfo,
-    });
-  } catch (e) {
-    console.error("Error processing request:", e);
-    return NextResponse.json(
-      { error: "Failed to process request" },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({
+//       status: 200,
+//       statusinfo,
+//     });
+//   } catch (e) {
+//     console.error("Error processing request:", e);
+//     return NextResponse.json(
+//       { error: "Failed to process request" },
+//       { status: 500 }
+//     );
+//   }
+// }
