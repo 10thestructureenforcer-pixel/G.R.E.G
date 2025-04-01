@@ -91,7 +91,7 @@ const PromptForm = ({
     }
     if (!isDisabled && input.trim()) {
       e.preventDefault();
-      const newUrl = `/guidance/${id}`;
+      const newUrl = `/guidance/chat/${id}`;
       window.history.pushState({}, "", newUrl);
       handleSubmit();
     }
@@ -109,7 +109,7 @@ const PromptForm = ({
         return;
       }
       if (!isDisabled && input.trim()) {
-        const newUrl = `/guidance/${id}`;
+        const newUrl = `/guidance/chat/${id}`;
         window.history.pushState({}, "", newUrl);
         handleSubmit();
       }

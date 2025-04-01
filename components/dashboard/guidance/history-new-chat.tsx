@@ -36,7 +36,7 @@ const HistoryAndNewChat = () => {
   });
 
   const handleChatClick = (chatId: string) => {
-    router.push(`/guidance/${chatId}`);
+    router.push(`/guidance/chat/${chatId}`);
     setIsHistoryOpen(false);
   };
 
@@ -122,7 +122,7 @@ const HistoryAndNewChat = () => {
         </Dialog>
         <div
           onClick={() => {
-            router.push("/guidance");
+            router.push("/guidance/chat");
           }}
           className="p-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-zinc-900 transition-all duration-200 flex items-center shadow-sm hover:shadow-md cursor-pointer"
         >

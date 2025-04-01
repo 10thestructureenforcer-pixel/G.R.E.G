@@ -1,20 +1,8 @@
 "use client";
 import { getClientList } from "@/actions/get-client-list";
+import { Client } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-
-interface Client {
-  id: string;
-  clientFirstName: string;
-  clientLastName: string;
-  clientEmail: string;
-  clientAddress: string;
-  nationality: string;
-  visaStatus: string;
-  legalConcern: string;
-  userId: string;
-  createdAt: Date;
-}
 
 interface ClientListProps {
   onClientSelect?: (client: Client) => void;

@@ -23,11 +23,22 @@ export interface RecentCasesInterface {
   recentCases: RecentCases[];
 }
 
-
-
 export interface Session {
   user: {
     id: string;
     email: string;
   };
+}
+
+export interface Client {
+  id: string;
+  clientFirstName: string;
+  clientLastName: string;
+  clientEmail: string;
+  clientAddress: string;
+  nationality: string;
+  visaStatus: string;
+  legalConcern: string;
+  userId: string;
+  createdAt: Date;
 }
