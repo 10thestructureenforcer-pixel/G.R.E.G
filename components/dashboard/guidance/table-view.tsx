@@ -43,26 +43,28 @@ const TableView = ({
   }
 
   return (
-    <div className="relative w-full px-4">
+    <div className="relative w-full px-2">
       <div className="overflow-x-auto rounded-md border">
-        <div className="min-w-[800px] w-full">
+        <div className="min-w-[600px] w-full">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Visa Type</TableHead>
-                <TableHead className="w-[120px]">Risk Level</TableHead>
-                <TableHead className="w-[140px]">Processing Time</TableHead>
-                <TableHead className="w-[120px]">Documents</TableHead>
-                <TableHead className="w-[120px]">Recommendation</TableHead>
-                <TableHead className="w-[300px]">Requirements</TableHead>
+                <TableHead className="w-[120px]">Visa Type</TableHead>
+                <TableHead className="w-[80px]">Risk Level</TableHead>
+                <TableHead className="w-[80px]">Processing Time</TableHead>
+                <TableHead className="w-[80px]">Documents</TableHead>
+                <TableHead className="w-[100px]">Recommendation</TableHead>
+                <TableHead className="w-[120px]">Requirements</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.comparisons.map((item, index) => (
                 <TableRow key={index} className="hover:bg-muted/50">
-                  <TableCell>
+                  <TableCell className="py-2">
                     <div className="flex items-center gap-1">
-                      <span className="font-medium">{item.visaType}</span>
+                      <span className="font-medium text-xs truncate">
+                        {item.visaType}
+                      </span>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
@@ -82,7 +84,7 @@ const TableView = ({
                       </TooltipProvider>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-2">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
@@ -94,7 +96,7 @@ const TableView = ({
                                 ? "secondary"
                                 : "destructive"
                             }
-                            className="text-xs"
+                            className="text-xs px-1.5"
                           >
                             {item.risks.riskLevel}
                           </Badge>
@@ -114,9 +116,9 @@ const TableView = ({
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1 py-1">
-                      <p className="text-sm font-medium">
+                  <TableCell className="py-2">
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-xs font-medium">
                         {item.timeline.processingTime}
                       </p>
                       <p className="text-xs text-muted-foreground leading-tight">
@@ -124,12 +126,12 @@ const TableView = ({
                       </p>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-2">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Badge variant="outline" className="text-xs">
-                            {item.documents.required?.length} Required
+                          <Badge variant="outline" className="text-xs px-1.5">
+                            {item.documents.required?.length} Docs
                           </Badge>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="max-w-[300px]">
@@ -149,7 +151,7 @@ const TableView = ({
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-2">
                     <Badge
                       variant={
                         item.recommendation.suitability === "RECOMMENDED"
@@ -158,19 +160,19 @@ const TableView = ({
                           ? "secondary"
                           : "destructive"
                       }
-                      className="text-xs"
+                      className="text-xs px-1.5"
                     >
                       {item.recommendation.suitability}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-2">
                     <ul className="list-disc list-inside space-y-0.5">
                       {item.eligibility.requirements
-                        .slice(0, 3)
+                        .slice(0, 2)
                         .map((req, idx) => (
                           <li
                             key={idx}
-                            className="text-xs text-muted-foreground"
+                            className="text-xs text-muted-foreground truncate"
                           >
                             {req}
                           </li>
