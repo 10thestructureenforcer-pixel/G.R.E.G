@@ -33,11 +33,18 @@ const clientFormSchema = z.object({
   clientLastName: z.string().min(2, "Last name must be at least 2 characters"),
   clientEmail: z.string().email("Invalid email address"),
   clientAddress: z.string().min(5, "Address must be at least 5 characters"),
+  clientPhone: z
+    .string()
+    .min(10, "Phone number must be at least 10 characters"),
+  dateOfBirth: z.string().min(1, "Date of Birth is required"),
   nationality: z.string().min(2, "Nationality must be at least 2 characters"),
   visaStatus: z.string().min(2, "Visa status must be at least 2 characters"),
   legalConcern: z
     .string()
     .min(10, "Legal concern must be at least 10 characters"),
+  A_number: z.string().min(1, "A-Number is required"),
+  sponsorCompany: z.string().min(1, "Sponsor Company is required"),
+  opposingParty: z.string().min(1, "Opposing Party is required"),
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
@@ -52,9 +59,14 @@ const ClientInfoButton = () => {
       clientLastName: "",
       clientEmail: "",
       clientAddress: "",
+      clientPhone: "",
+      dateOfBirth: "",
       nationality: "",
       visaStatus: "",
       legalConcern: "",
+      A_number: "",
+      sponsorCompany: "",
+      opposingParty: "",
     },
   });
 
@@ -112,19 +124,36 @@ const ClientInfoButton = () => {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="clientEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter email address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="clientEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter email address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="clientPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="clientAddress"
@@ -138,6 +167,36 @@ const ClientInfoButton = () => {
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="dateOfBirth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="A_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>A-Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter A-number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -166,6 +225,36 @@ const ClientInfoButton = () => {
                   )}
                 />
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="sponsorCompany"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sponsor Company</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter sponsor company" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="opposingParty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Opposing Party</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter opposing party" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="legalConcern"
@@ -183,6 +272,7 @@ const ClientInfoButton = () => {
                   </FormItem>
                 )}
               />
+
               <div className="flex justify-end gap-2">
                 <Button
                   type="submit"

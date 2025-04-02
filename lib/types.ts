@@ -36,9 +36,14 @@ export interface Client {
   clientLastName: string;
   clientEmail: string;
   clientAddress: string;
+  clientPhone: string;
+  dateOfBirth: Date;
   nationality: string;
   visaStatus: string;
   legalConcern: string;
+  A_number: string;
+  sponsorCompany: string;
+  opposingParty: string;
   userId: string;
   createdAt: Date;
 }

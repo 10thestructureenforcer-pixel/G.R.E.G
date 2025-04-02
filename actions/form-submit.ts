@@ -26,6 +26,11 @@ export async function formSubmit(formData: any): Promise<Result> {
       nationality,
       visaStatus,
       legalConcern,
+      A_number,
+      sponsorCompany,
+      opposingParty,
+      clientPhone,
+      dateOfBirth,
     } = formData;
 
     const user = await prisma.client.create({
@@ -37,6 +42,11 @@ export async function formSubmit(formData: any): Promise<Result> {
         nationality,
         visaStatus,
         legalConcern,
+        A_number,
+        sponsorCompany,
+        opposingParty,
+        clientPhone,
+        dateOfBirth,
         user: {
           connect: {
             email: session.user.email!,
