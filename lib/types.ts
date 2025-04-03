@@ -37,7 +37,7 @@ export interface Client {
   clientEmail: string;
   clientAddress: string;
   clientPhone: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   nationality: string;
   visaStatus: string;
   legalConcern: string;
@@ -46,4 +46,21 @@ export interface Client {
   opposingParty: string;
   userId: string;
   createdAt: Date;
+}
+
+export interface Conflict {
+  type: string;
+  message: string;
+  matches: Array<{
+    clientFirstName: string;
+    clientLastName: string;
+    A_number: string;
+    sponsorCompany: string;
+  }>;
+}
+
+export interface AnalysisData {
+  status: string;
+  conflictFound: boolean;
+  conflicts: Conflict[];
 }
