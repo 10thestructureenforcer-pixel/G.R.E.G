@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   Info,
   FileText,
+  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -157,6 +158,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
 
       {completion && (
         <div className="mt-6 space-y-4">
+          {/* <Download onClick={async () => {}} /> */}
           <h3 className="text-sm font-medium">Generated Memo</h3>
           <div className="p-2 sm:p-4 bg-background/50 rounded-md border w-full max-w-full">
             <div className="relative w-full h-[300px] sm:h-[400px] overflow-hidden">
