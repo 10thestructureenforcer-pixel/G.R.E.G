@@ -7,18 +7,21 @@ import { auth } from "@/auth";
 function LoadingSpinner() {
   return (
     <div className="flex h-[50vh] w-full items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <Loader2 className="h-8 w-8 animate-spin text-green-600" />
     </div>
   );
 }
 
 export default async function Page() {
   const session = await auth();
+  if (!session) {
+    return <div>Not authorized</div>;
+  }
 
   const clients = await prisma.client.findMany({
     where: {
       user: {
-        email: session?.user?.email!,
+        email: session?.user?.email,
       },
     },
   });
