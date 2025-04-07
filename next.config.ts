@@ -6,10 +6,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "static.vecteezy.com",
+        hostname: "**",
         port: "",
-        pathname: "**", // Update this line to match all paths
-        search: "",
+        pathname: "**",
       },
     ],
   },

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import ExaFeed from "@/components/dashboard/governance/exa-feed";
 
 const features = [
   {
@@ -71,6 +72,27 @@ const PageContent = () => {
                 </Card>
               ))}
             </div>
+          </div>
+
+          <div className="mt-8">
+            <Card className="overflow-hidden">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    <CardTitle className="text-xl font-semibold tracking-tight">
+                      Latest Immigration News
+                    </CardTitle>
+                    <CardDescription>
+                      Stay updated with the latest visa and immigration news
+                      from the USA
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 pt-6">
+                <ExaFeed />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
