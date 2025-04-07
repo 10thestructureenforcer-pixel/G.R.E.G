@@ -1,7 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import Exa from "exa-js";
 import {
   Card,
   CardContent,
@@ -15,24 +14,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface NewsItem {
+  id: string;
+  title: string;
+  url: string;
+  publishedDate?: string;
+  author?: string;
+  text?: string;
+  image?: string;
+}
+
 const ExaFeed = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<NewsItem[]>({
     queryKey: ["exa-feed"],
     queryFn: async () => {
-      const exa = new Exa(process.env.NEXT_PUBLIC_EXA_API_KEY as string);
-      const result = await exa.searchAndContents(
-        "Latest  Visa and immigration News of USA",
-        {
-          text: {
-            maxCharacters: 1000,
-          },
-          category: "news",
-          type: "auto",
-        }
-      );
-      return result.results;
+      const response = await fetch("/api/exa-feed");
+      if (!response.ok) {
+        throw new Error("Failed to fetch news data");
+      }
+      return response.json();
     },
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   if (isLoading) {
@@ -58,7 +60,7 @@ const ExaFeed = () => {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {data?.map((item) => (
+      {data?.map((item: NewsItem) => (
         <Card
           key={item.id}
           className="overflow-hidden hover:shadow-md transition-shadow"
