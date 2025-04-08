@@ -1,5 +1,5 @@
 "use client";
-import { FileIcon } from "lucide-react";
+import { FileIcon, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
 import { useChat } from "@ai-sdk/react";
@@ -168,7 +168,7 @@ const UploadComponent = () => {
     <div className="flex flex-col gap-6">
       <div className="w-full">
         <h1 className="text-2xl font-medium mb-6 text-foreground">
-          Research Documents
+          Summarize your Case Documents
         </h1>
 
         <div className="mb-8">
@@ -231,8 +231,8 @@ const UploadComponent = () => {
               }
               className={`px-6 py-3 rounded-md font-medium transition-colors ${
                 file && !(status === "submitted" || status === "streaming")
-                  ? "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white cursor-pointer"
-                  : "bg-transparent dark:bg-blue-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  ? "bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600 text-black cursor-pointer"
+                  : "bg-green-500 dark:bg-green-500 text-white dark:text-black cursor-not-allowed"
               }`}
             >
               {file ? "Process Document" : "Upload a File First"}

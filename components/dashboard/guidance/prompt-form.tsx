@@ -139,7 +139,7 @@ const PromptForm = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 md:h-8 px-1 md:px-2 text-[9px] cursor-pointer -mx-3 md:text-xs hover:bg-accent/50 "
+                  className="h-6 md:h-8 px-1 md:px-2 text-[9px] cursor-pointer -mx-3 md:text-xs hover:bg-accent/50 md:border-none border border-gray-300 dark:border-gray-600 mr-2 rounded-md"
                 >
                   {isClientSelected ? (
                     <span className="text-[9px] md:text-xs font-medium">
@@ -161,7 +161,7 @@ const PromptForm = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 md:h-8 px-1 md:px-2 text-[9px] md:text-xs hover:bg-accent/50"
+                  className="h-6 md:h-8 px-1 md:px-2 text-[9px] md:text-xs hover:bg-accent/50 md:border-none border border-gray-300 dark:border-gray-600 rounded-md"
                 >
                   <span className="md:hidden">
                     <Sparkles className="h-2 w-2 md:h-3 md:w-3" />
@@ -178,7 +178,7 @@ const PromptForm = ({
                   <DropdownMenuItem
                     key={prompt}
                     onClick={() => onPromptSelect(prompt)}
-                    className="text-xs md:text-sm hover:bg-accent/50"
+                    className="text-xs md:text-sm hover:bg-accent/50 py-2 md:py-1.5"
                   >
                     {prompt}
                   </DropdownMenuItem>

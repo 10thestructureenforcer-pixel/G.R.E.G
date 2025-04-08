@@ -81,7 +81,11 @@ export function AppSidebar() {
         <div className="flex items-center p-2">
           <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px] bg-background rounded-lg">
             <Image
-              src={theme === "dark" ? "/logos/greg_2.png" : "/logos/greg_2.png"}
+              src={
+                theme === "dark"
+                  ? "/logos/greg_final.png"
+                  : "/logos/greg_final.png"
+              }
               alt="logo"
               width={70}
               height={70}

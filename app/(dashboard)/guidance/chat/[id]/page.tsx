@@ -20,7 +20,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     },
   });
 
-  console.log("the inital messages ", initalMessages);
+  // console.log("the inital messages ", initalMessages);
 
   return (
     <div className="bg-white dark:bg-transparent ">

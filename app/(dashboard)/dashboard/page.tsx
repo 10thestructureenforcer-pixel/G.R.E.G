@@ -4,6 +4,7 @@ import Cards from "@/components/dashboard/main-dashboard/cards";
 import ClientInfoButton from "@/components/dashboard/main-dashboard/client-info-button";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import prisma from "@/lib/db";
+import { FileText, Plane, Scale3d, Workflow } from "lucide-react";
 
 const page = async () => {
   const session = await auth();
@@ -36,8 +37,27 @@ const page = async () => {
       </div>
 
       {/* <ChatUI /> */}
-      <div className="w-full">
-        <Cards totalCases={totalCases} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Cards
+          totalCases={totalCases}
+          title="Research insights"
+          icon={<FileText />}
+        />
+        <Cards
+          totalCases={totalCases}
+          title="Guidance Overview"
+          icon={<Plane />}
+        />
+        <Cards
+          totalCases={totalCases}
+          title="Ethics usage"
+          icon={<Scale3d />}
+        />
+        <Cards
+          totalCases={totalCases}
+          title="Governance & Compliance"
+          icon={<Workflow />}
+        />
       </div>
     </div>
   );

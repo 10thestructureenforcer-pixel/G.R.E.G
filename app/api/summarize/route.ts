@@ -88,14 +88,14 @@ export async function POST(request: NextRequest) {
     const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
     console.log(fileContent);
 
-    // Create initial CaseSummary record
-    await prisma.caseSummary.create({
-      data: {
-        status: "PENDING",
-        caseFileId: updatedsupabaseUrl.id,
-        summary: "",
-      },
-    });
+    // // Create initial CaseSummary record
+    // await prisma.caseSummary.create({
+    //   data: {
+    //     status: "PENDING",
+    //     caseFileId: updatedsupabaseUrl.id,
+    //     summary: "",
+    //   },
+    // });
 
     const llmSummary = new ChatOpenAI({
       model: "gpt-4o-mini",
@@ -142,12 +142,10 @@ Extarct Citation details from the document and start  with the citation details 
       return LangChainAdapter.toDataStreamResponse(stream, {
         callbacks: {
           onFinal: async (completion) => {
-            await prisma.caseSummary.update({
+            await prisma.caseSummary.create({
               data: {
                 summary: completion,
                 status: "SUCCESS",
-              },
-              where: {
                 caseFileId: updatedsupabaseUrl.id,
               },
             });

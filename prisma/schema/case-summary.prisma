@@ -9,7 +9,7 @@ model CaseSummary {
   caseFileId String  @unique
   summary    String   
   createdAt  DateTime @default(now())
-  status     STATUS?
+  status     STATUS @default(FAILED)
   casefile   CaseFile @relation(fields: [caseFileId], references: [id], onDelete: Cascade) 
   
   @@map("case_summaries")

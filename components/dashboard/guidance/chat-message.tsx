@@ -100,12 +100,13 @@ const ChatMessage = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const isUserScrolling = useRef(false);
   const lastScrollTop = useRef(0);
+  const autoScrollEnabled = useRef(true);
 
   const scrollToBottom = () => {
     if (
       messagesEndRef.current &&
       containerRef.current &&
-      !isUserScrolling.current
+      autoScrollEnabled.current
     ) {
       const container = containerRef.current;
       const isNearBottom =
@@ -124,34 +125,49 @@ const ChatMessage = ({
 
   const handleScroll = () => {
     if (containerRef.current) {
-      const { scrollTop } = containerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
       const isScrollingUp = scrollTop < lastScrollTop.current;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
 
+      // If user scrolls up, disable auto-scroll
       if (isScrollingUp) {
-        isUserScrolling.current = true;
-        setTimeout(() => {
-          isUserScrolling.current = false;
-        }, 1000);
+        autoScrollEnabled.current = false;
+      }
+
+      // If user scrolls to bottom, re-enable auto-scroll
+      if (isAtBottom) {
+        autoScrollEnabled.current = true;
       }
 
       lastScrollTop.current = scrollTop;
     }
   };
 
-  useEffect(() => {
-    if (status === "streaming") {
-      const scroll = () => {
-        scrollToBottom();
-      };
-
-      const scrollInterval = setInterval(scroll, 100);
-      return () => clearInterval(scrollInterval);
-    }
-  }, [status]);
-
+  // Scroll when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Scroll during streaming
+  useEffect(() => {
+    if (status === "streaming") {
+      // Use a more reliable approach for streaming
+      const scrollInterval = setInterval(() => {
+        scrollToBottom();
+      }, 100);
+
+      return () => clearInterval(scrollInterval);
+    }
+  }, [status, messages]);
+
+  // Re-enable auto-scroll after a period of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      autoScrollEnabled.current = true;
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <ScrollArea className="h-full">
@@ -174,7 +190,7 @@ const ChatMessage = ({
             />
           )
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="h-4" />
       </div>
     </ScrollArea>
   );

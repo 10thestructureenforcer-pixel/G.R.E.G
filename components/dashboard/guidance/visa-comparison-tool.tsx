@@ -15,6 +15,7 @@ import { visaComparisonSchema } from "@/lib/schema";
 import TableView from "./table-view";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 type VisaComparisonType = z.infer<typeof visaComparisonSchema>;
 
@@ -40,6 +41,11 @@ const VisaComparisonTool: React.FC<VisaComparisonToolProps> = ({ clients }) => {
 
   const handleCompare = async () => {
     if (!selectedClient || selectedVisas.length === 0) {
+      return;
+    }
+
+    if (selectedVisas.length > 3) {
+      toast.error("You can only compare up to 3 visas at a time");
       return;
     }
 

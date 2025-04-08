@@ -22,7 +22,9 @@ const Navbar = () => {
             <div className="relative overflow-hidden group cursor-pointer w-[45px] h-[45px] md:w-[60px] md:h-[60px] bg-background rounded-md mt-3 ml-2">
               <Image
                 src={
-                  theme === "dark" ? "/logos/greg_2.png" : "/logos/greg_2.png"
+                  theme === "dark"
+                    ? "/logos/greg_final.png"
+                    : "/logos/greg_final.png"
                 }
                 alt="logo"
                 width={45}

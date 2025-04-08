@@ -48,16 +48,8 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
 
   const handleClientSelect = (client: Client) => {
     setClientInfo((prev) => ({
-      id: client.id,
-      userId: client.userId,
-      nationality: client.nationality,
-      visaStatus: client.visaStatus,
-      legalConcern: client.legalConcern,
-      clientFirstName: client.clientFirstName,
-      clientLastName: client.clientLastName,
-      clientEmail: client.clientEmail,
-      clientAddress: client.clientAddress,
-      prompt: dropdownText,
+      ...prev,
+      ...client,
     }));
     setIsClientSelected(true);
   };
@@ -75,7 +67,7 @@ const Chat = ({ id, initalMessages, session }: ChatProps) => {
     },
     id: id,
     onFinish: (done) => {
-      console.log(done);
+      // console.log(done);
     },
   });
 
