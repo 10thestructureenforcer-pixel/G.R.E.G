@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import ConflictAnalyzerTool from "@/components/dashboard/ethics/conflict-analyzer-tool";
 
-const Page = () => {
+const Page = async () => {
   return (
     <Suspense
       fallback={
