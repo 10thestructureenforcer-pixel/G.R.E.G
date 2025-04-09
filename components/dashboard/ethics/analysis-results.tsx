@@ -19,10 +19,21 @@ import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
+import { pdf } from "@react-pdf/renderer";
+import DownLoadPDF from "./render-download-pdf";
+import { useTheme } from "next-themes";
 
 const AnalysisResults = ({ data }: { data: AnalysisData }) => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { theme } = useTheme();
   const { complete, completion } = useCompletion({
     api: "/api/generate-memo",
+    onFinish: () => {
+      setIsGenerating(false);
+    },
+    onResponse: () => {
+      setIsGenerating(true);
+    },
   });
 
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -31,7 +42,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
     initialContent: [
       {
         type: "paragraph",
-        content: "hello",
+        content: "Generating...",
       },
     ],
   });
@@ -158,14 +169,39 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
 
       {completion && (
         <div className="mt-6 space-y-4">
-          {/* <Download onClick={async () => {}} /> */}
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+              disabled={isGenerating}
+              onClick={async () => {
+                const HTMLFromBlocks = await editor.blocksToHTMLLossy(blocks);
+                const pdfInstance = pdf(
+                  <DownLoadPDF generatedMemo={HTMLFromBlocks} />
+                );
+                const blob = await pdfInstance.toBlob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "generated-memo.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+              }}
+            >
+              <Download className="h-4 w-4 text-green-500" />
+              Download PDF
+            </Button>
+          </div>
           <h3 className="text-sm font-medium">Generated Memo</h3>
           <div className="p-2 sm:p-4 bg-background/50 rounded-md border w-full max-w-full">
             <div className="relative w-full h-[300px] sm:h-[400px] overflow-hidden">
               <div className="absolute inset-0 overflow-y-auto">
                 <BlockNoteView
                   editor={editor}
-                  theme="dark"
+                  theme={theme === "dark" ? "dark" : "light"}
                   onChange={() => {
                     setBlocks(editor.document);
                   }}

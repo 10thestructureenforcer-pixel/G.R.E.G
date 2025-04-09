@@ -46,6 +46,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "exa-js": "^1.5.13",
+    "html-react-parser": "^5.2.3",
     "langchain": "^0.3.19",
     "lucide-react": "^0.477.0",
     "mammoth": "^1.9.0",

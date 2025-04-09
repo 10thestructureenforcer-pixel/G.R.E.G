@@ -8,10 +8,12 @@ const page = () => {
   return (
     <div className="flex flex-col gap-5">
       <Navbar />
-      <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden">
+      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden min-h-[80vh]">
         <DotPattern
           glow={true}
-          className={cn("[mask-image:radial-gradient(transparent)]")}
+          className={cn(
+            "absolute inset-0 [mask-image:radial-gradient(transparent)]"
+          )}
         />
         <Hero />
       </div>
