@@ -6,9 +6,9 @@ import {
   Document,
   StyleSheet,
   PDFViewer,
+  Image,
 } from "@react-pdf/renderer";
 import parse from "html-react-parser";
-import Image from "next/image";
 
 // Create styles
 const styles = StyleSheet.create({
@@ -258,7 +258,7 @@ const DownLoadPDF = ({ generatedMemo }: { generatedMemo: string }) => {
   return (
     <Document>
       <Page style={styles.page}>
-        <Image src="/logos/greg_1.png" style={styles.logo} alt="Greg Logo" />
+        <Image src="/logos/greg_1.png" style={styles.logo} />
         {/* Render parsed HTML content */}
         {renderHTMLElements()}
       </Page>

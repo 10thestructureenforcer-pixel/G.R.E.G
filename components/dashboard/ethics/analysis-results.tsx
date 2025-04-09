@@ -56,6 +56,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
         editor.replaceBlocks(editor.document, blocksFromMarkdown);
       }
     };
+
     updateBlocks();
   }, [completion, editor]);
 
@@ -152,7 +153,8 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  disabled={isGenerating}
+                  className="flex items-center gap-2 cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleGenerateMemo(conflict);
@@ -173,7 +175,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 cursor-pointer"
               disabled={isGenerating}
               onClick={async () => {
                 const HTMLFromBlocks = await editor.blocksToHTMLLossy(blocks);
