@@ -45,16 +45,16 @@ const TableView = ({
   return (
     <div className="relative w-full px-2">
       <div className="overflow-x-auto rounded-md border">
-        <div className="min-w-[600px] w-full">
+        <div className="min-w-[900px] w-full">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[120px]">Visa Type</TableHead>
-                <TableHead className="w-[80px]">Risk Level</TableHead>
-                <TableHead className="w-[80px]">Processing Time</TableHead>
-                <TableHead className="w-[80px]">Documents</TableHead>
-                <TableHead className="w-[100px]">Recommendation</TableHead>
-                <TableHead className="w-[120px]">Requirements</TableHead>
+                <TableHead className="w-[100px]">Risk Level</TableHead>
+                <TableHead className="w-[150px]">Processing Time</TableHead>
+                <TableHead className="w-[120px]">Documents</TableHead>
+                <TableHead className="w-[120px]">Recommendation</TableHead>
+                <TableHead className="w-[200px]">Requirements</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,13 +62,13 @@ const TableView = ({
                 <TableRow key={index} className="hover:bg-muted/50">
                   <TableCell className="py-2">
                     <div className="flex items-center gap-1">
-                      <span className="font-medium text-xs truncate">
+                      <span className="font-medium text-xs">
                         {item.visaType}
                       </span>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <InfoIcon className="h-3 w-3 text-muted-foreground" />
+                            <InfoIcon className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-[300px]">
                             <div className="space-y-1">
@@ -118,10 +118,10 @@ const TableView = ({
                   </TableCell>
                   <TableCell className="py-2">
                     <div className="flex flex-col gap-0.5">
-                      <p className="text-xs font-medium">
+                      <p className="text-xs font-medium whitespace-normal">
                         {item.timeline.processingTime}
                       </p>
-                      <p className="text-xs text-muted-foreground leading-tight">
+                      <p className="text-xs text-muted-foreground leading-tight whitespace-normal">
                         {item.timeline.estimatedDuration}
                       </p>
                     </div>
@@ -172,7 +172,7 @@ const TableView = ({
                         .map((req, idx) => (
                           <li
                             key={idx}
-                            className="text-xs text-muted-foreground truncate"
+                            className="text-xs text-muted-foreground whitespace-normal"
                           >
                             {req}
                           </li>

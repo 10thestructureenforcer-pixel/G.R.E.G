@@ -57,6 +57,7 @@ const VisaComparisonTool: React.FC<VisaComparisonToolProps> = ({ clients }) => {
     api: "/api/visa-compare",
     schema: visaComparisonSchema,
     onFinish: async (completion) => {
+      window.history.replaceState({}, "", window.location.pathname);
       const currentClient = clients.find(
         (c) => c.id === selectedClient
       ) as Client;
@@ -70,6 +71,7 @@ const VisaComparisonTool: React.FC<VisaComparisonToolProps> = ({ clients }) => {
         gptOutput: JSON.stringify(gptOutput),
         userId: currentUserId ?? "",
       });
+
       // console.log("Stored output is ", storedOuput);
     },
   });
@@ -78,6 +80,10 @@ const VisaComparisonTool: React.FC<VisaComparisonToolProps> = ({ clients }) => {
     if (!selectedClient || selectedVisas.length === 0) {
       return;
     }
+
+    // if (compareId) {
+    //   console.log("Compare ID is ", compareId);
+    // }
 
     if (selectedVisas.length > 3) {
       toast.error("You can only compare up to 3 visas at a time");
