@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { ModeToggle } from "../mood-toggle";
 
 const Navbar = () => {
   const router = useRouter();
@@ -17,10 +18,10 @@ const Navbar = () => {
   return (
     <div className="w-full">
       <nav className="w-full">
-        <div className="flex items-center justify-between w-full container mx-auto px-4">
+        <div className="flex items-center justify-between w-full container mx-auto px-2 py-1">
           {/* Logo section - left side */}
           {!isDashboardRoute && (
-            <div className="relative overflow-hidden group cursor-pointer w-[35px] h-[35px] md:w-[45px] md:h-[45px] bg-background rounded-md  ml-2 mt-2">
+            <div className="relative overflow-hidden group cursor-pointer w-[40px] h-[40px] md:w-[60px] bg-background  md:h-[60px] rounded-md mt-1 ">
               <Image
                 src={
                   theme === "dark"
@@ -28,17 +29,20 @@ const Navbar = () => {
                     : "/logos/greg_final.png"
                 }
                 alt="logo"
-                width={45}
-                height={45}
-                className="object-contain md:w-[45px] md:h-[45px] "
+                width={70}
+                height={70}
+                className="object-contain bg-red-100 "
               />
               <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
             </div>
           )}
 
           {/* Center section - can be used for navigation links if needed */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center mx-2">
             {/* Add navigation links here if needed */}
+            <div className="sm:ml-auto  ml-auto hidden sm:block ">
+              <ModeToggle />
+            </div>
           </div>
 
           {/* Auth section - right side */}
@@ -64,7 +68,7 @@ const Navbar = () => {
                   }}
                   type="button"
                   variant="outline"
-                  className="hover:bg-green-50 hover:text-green-700 hover:border-green-200 h-9 shadow cursor-pointer text-sm md:text-base"
+                  className="hover:bg-green-50 hover:text-green-700 hover:border-green-200 h-8 shadow cursor-pointer text-sm md:text-base"
                 >
                   Log in
                 </Button>
@@ -74,7 +78,7 @@ const Navbar = () => {
                     router.push("/sign-up");
                   }}
                   type="button"
-                  className="bg-green-500 text-white hover:bg-green-600 h-9 cursor-pointer text-sm md:text-base"
+                  className="bg-green-500 text-white hover:bg-green-600 h-8 cursor-pointer text-sm md:text-base"
                 >
                   Signup
                 </Button>

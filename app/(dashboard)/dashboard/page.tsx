@@ -18,6 +18,14 @@ const page = async () => {
     },
   });
 
+  const totalVisaComparisons = await prisma.visaComparison.count({
+    where: {
+      user: {
+        id: session?.user?.id,
+      },
+    },
+  });
+
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
       <div className="mb-8 md:mb-12">
@@ -44,7 +52,7 @@ const page = async () => {
           icon={<FileText />}
         />
         <Cards
-          totalCases={totalCases}
+          totalCases={totalVisaComparisons}
           title="Guidance Overview"
           icon={<Plane />}
         />
