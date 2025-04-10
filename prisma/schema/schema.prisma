@@ -58,6 +58,7 @@ model User {
   case_file     CaseFile[]
   chat          Chat[]
   client        Client[]
+  visaComparison VisaComparison[]
  
   @@map("users")
 }

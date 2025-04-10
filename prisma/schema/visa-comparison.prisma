@@ -1,0 +1,12 @@
+model VisaComparison {
+    id String @id @default(uuid())
+    userId String
+    clientId String
+    clientName String
+    visaType String[]
+    gptOutput Json
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id])
+}

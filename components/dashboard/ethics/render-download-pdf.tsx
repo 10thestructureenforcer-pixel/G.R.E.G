@@ -257,7 +257,7 @@ const DownLoadPDF = ({ generatedMemo }: { generatedMemo: string }) => {
 
   return (
     <Document>
-      <Page style={styles.page}>
+      <Page key={generatedMemo} style={styles.page}>
         <Image src="/logos/greg_1.png" style={styles.logo} />
         {/* Render parsed HTML content */}
         {renderHTMLElements()}
