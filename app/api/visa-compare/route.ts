@@ -43,39 +43,7 @@ Client Information:
 - Legal Concern: ${clientDetails.legalConcern}
 
 For EACH visa type listed above, provide a detailed comparison in the following format:
-{
-  "comparisons": [
-    {
-      "visaType": "VISA_TYPE_1",
-      "eligibility": {
-        "requirements": ["requirement1", "requirement2", ...],
-        "qualifications": ["qualification1", "qualification2", ...],
-        "restrictions": ["restriction1", "restriction2", ...]
-      },
-      "timeline": {
-        "processingTime": "estimated processing time",
-        "steps": ["step1", "step2", ...],
-        "estimatedDuration": "total duration"
-      },
-      "risks": {
-        "redFlags": ["risk1", "risk2", ...],
-        "riskLevel": "LOW/MEDIUM/HIGH",
-        "mitigationStrategies": ["strategy1", "strategy2", ...]
-      },
-      "documents": {
-        "required": ["document1", "document2", ...],
-        "optional": ["optional1", "optional2", ...],
-        "specialRequirements": ["special1", "special2", ...]
-      },
-      "recommendation": {
-        "suitability": "RECOMMENDED/CONSIDER/NOT_RECOMMENDED",
-        "reasoning": "detailed reasoning",
-        "alternatives": ["alternative1", "alternative2", ...]
-      }
-    },
-    // Repeat for each visa type
-  ]
-}
+
 
 Important:
 1. Provide a separate comparison object for EACH visa type in the comparisons array

@@ -64,3 +64,12 @@ export interface AnalysisData {
   conflictFound: boolean;
   conflicts: Conflict[];
 }
+
+export interface VisaHistoryType {
+  id: string;
+  visaType: string[];
+  userId: string;
+  clientName: string;
+  clientId: string;
+  gptOutput: string;
+}
