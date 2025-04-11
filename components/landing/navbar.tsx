@@ -13,27 +13,25 @@ const Navbar = () => {
   const pathname = usePathname();
   const { theme } = useTheme();
 
+  const logo =
+    theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
   const isDashboardRoute = pathname.startsWith("/dashboard");
 
   return (
-    <div className="w-full">
+    <div className="w-full border-2 border-b-neutral-400/40 dark:border-b-white/10">
       <nav className="w-full">
-        <div className="flex items-center justify-between w-full container mx-auto px-2 py-1">
+        <div className="flex items-center justify-between w-full container mx-auto p-2">
           {/* Logo section - left side */}
           {!isDashboardRoute && (
-            <div className="relative overflow-hidden group cursor-pointer w-[40px] h-[40px] md:w-[60px] bg-background  md:h-[60px] rounded-md mt-1 ">
+            <div className="relative overflow-hidden group cursor-pointer w-[50px] h-[50px] md:w-[75px] bg-background  md:h-[70px] rounded-md  ">
               <Image
-                src={
-                  theme === "dark"
-                    ? "/logos/greg_final.png"
-                    : "/logos/greg_final.png"
-                }
+                src={logo}
                 alt="logo"
-                width={70}
-                height={70}
-                className="object-contain bg-red-100 "
+                width={90}
+                height={90}
+                className="object-contain bg-background "
+                priority
               />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
             </div>
           )}
 

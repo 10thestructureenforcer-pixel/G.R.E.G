@@ -15,6 +15,7 @@ import { useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/mantine/style.css";
 import GeneratedDraftResponse from "./generated-draft-response";
 import { BlockNoteView } from "@blocknote/mantine";
+import { useTheme } from "next-themes";
 
 const rfeResponseTypes = [
   "Motion to reopen",
@@ -31,12 +32,13 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
   const [selectedResponseType, setSelectedResponseType] = useState<string>("");
   const [selectedClient, setSelectedClient] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const { theme } = useTheme();
 
   const editor = useCreateBlockNote({
     initialContent: [
       {
         type: "paragraph",
-        content: "",
+        content: "Draft response...",
       },
     ],
   });
@@ -63,13 +65,13 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
           <div className="border rounded-md overflow-hidden">
             <BlockNoteView
               editor={editor}
+              theme={theme === "dark" ? "dark" : "light"}
               onChange={async () => {
                 const editorContent = await editor.blocksToMarkdownLossy(
                   editor.document
                 );
                 setContent(editorContent);
               }}
-              theme="dark"
               className="w-full [&_.bn-container]:!w-full [&_.bn-editor]:!w-full [&_.bn-content]:!w-full [&_.bn-content]:!min-h-[200px] [&_.bn-content]:!p-4 [&_.bn-content]:!overflow-y-auto [&_.bn-content]:!overscroll-contain"
             />
           </div>

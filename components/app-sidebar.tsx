@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
+import toast from "react-hot-toast";
 
 // Menu items.
 const items = [
@@ -71,6 +72,8 @@ const items = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const logo =
+    theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
 
   return (
     <Sidebar
@@ -81,17 +84,12 @@ export function AppSidebar() {
         <div className="flex items-center p-2">
           <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px] bg-background rounded-lg">
             <Image
-              src={
-                theme === "dark"
-                  ? "/logos/greg_final.png"
-                  : "/logos/greg_final.png"
-              }
+              src={logo}
               alt="logo"
               width={70}
               height={70}
-              className="object-contain"
+              className="object-contain "
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg" />
           </div>
         </div>
       </SidebarHeader>
@@ -183,7 +181,10 @@ export function AppSidebar() {
             variant="outline"
             size="sm"
             className="gap-2 text-sm hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors duration-300 cursor-pointer"
-            onClick={() => signOut({ redirectTo: "/" })}
+            onClick={() => {
+              toast.success("Signing out...");
+              signOut({ redirectTo: "/" });
+            }}
           >
             <LogOut size={14} />
             Sign Out
