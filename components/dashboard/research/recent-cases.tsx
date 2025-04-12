@@ -1,6 +1,6 @@
 "use client";
 
-import { GetRecentCases } from "@/actions/get-recen-cases";
+import { GetRecentCases } from "@/actions/get-recent-cases";
 import { RecentCases, RecentCasesInterface } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { FileIcon, Loader2 } from "lucide-react";

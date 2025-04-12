@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import AnimatedQuotes from "./animated-quotes";
 import RefinedSummaryButton from "./refined-summary-button";
 import { StoreRefineSummary } from "@/actions/store-refined-summary";
+import { GetRecentCases } from "@/actions/get-recent-cases";
 
 interface CaseSummary {
   status: "PENDING" | "SUCCESS" | "FAILED";
@@ -29,6 +30,7 @@ const UploadComponent = () => {
     "none" | "original" | "refined"
   >("none");
   const [refinedSummary, setRefinedSummary] = useState("");
+  const [caseId, setCaseId] = useState<string>("");
   const queryClient = useQueryClient();
 
   const {
@@ -40,7 +42,7 @@ const UploadComponent = () => {
     api: "/api/summarize",
     streamProtocol: "data",
     credentials: "same-origin",
-    onFinish: () => {
+    onFinish: async () => {
       queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
         return old.map((case_) => {
           if (case_.casesummary?.status === "PENDING") {
@@ -58,6 +60,12 @@ const UploadComponent = () => {
       queryClient.invalidateQueries({ queryKey: ["recentCases"] });
 
       setSummaryType("original");
+
+      const recentCases = await GetRecentCases();
+      const latestCase = recentCases?.[0];
+      if (latestCase) {
+        setCaseId(latestCase.id);
+      }
     },
   });
 
@@ -171,16 +179,9 @@ const UploadComponent = () => {
 
   const { complete, completion } = useCompletion({
     api: "/api/summarize/refine-summary",
-
-    onFinish: async (summary) => {
-      const recentCases = queryClient.getQueryData<Case[]>(["recentCases"]);
-      const latestCase = recentCases?.[0];
-      // console.log(latestCase);
-      console.log(summary);
-
-      if (latestCase) {
-        await StoreRefineSummary(summary, latestCase.casesummary.caseFileId);
-      }
+    body: {
+      prompt: originalSummary,
+      caseId: caseId,
     },
   });
   const handleSubmit = async () => {
@@ -192,7 +193,7 @@ const UploadComponent = () => {
   const handleRefinedSummary = async (refinedText: string) => {
     setSummaryType("refined");
     setRefinedSummary(refinedText);
-    complete(refinedText);
+    complete("");
   };
 
   return (
