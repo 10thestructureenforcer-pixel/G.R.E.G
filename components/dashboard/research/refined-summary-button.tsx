@@ -3,22 +3,32 @@ import { Brain } from "lucide-react";
 import React from "react";
 
 const RefinedSummaryButton = ({
-  isFinishedSummary,
+  isOriginalSummaryDone,
   onRefinedSummary,
   originalSummary,
+  isRefinedSummaryDone,
 }: {
-  isFinishedSummary: boolean;
+  isOriginalSummaryDone: boolean;
   onRefinedSummary: (refinedText: string) => void;
   originalSummary: string;
+  isRefinedSummaryDone: boolean;
 }) => {
+  const handleRefine = () => {
+    const refinePrompt = `Please refine and improve the following summary, making it more detailed and comprehensive while maintaining accuracy:\n\n${originalSummary}`;
+    onRefinedSummary(refinePrompt);
+  };
+
+  if (!isOriginalSummaryDone || isRefinedSummaryDone) {
+    return null;
+  }
+
   return (
     <div className="flex justify-end mb-2">
       <Button
-        disabled={!isFinishedSummary}
-        onClick={() => onRefinedSummary(originalSummary)}
+        onClick={handleRefine}
         className="bg-yellow-400 hover:bg-yellow-500 cursor-pointer text-black"
       >
-        <Brain className=" h-4 w-4" />
+        <Brain className="h-4 w-4 mr-2" />
         Refine Summary
       </Button>
     </div>

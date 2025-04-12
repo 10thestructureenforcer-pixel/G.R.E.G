@@ -25,9 +25,10 @@ interface Case {
 const UploadComponent = () => {
   const [file, setFile] = useState<FileList | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isfinishedSummary, setIsFinishedSummary] = useState<boolean>(false);
-  const [isorginalSummary, setIsOrginalSummary] = useState<boolean>(false);
-  const [isRefinedSummary, setIsRefinedSummary] = useState<boolean>(false);
+  const [summaryType, setSummaryType] = useState<
+    "none" | "original" | "refined"
+  >("none");
+  const [refinedSummary, setRefinedSummary] = useState("");
   const queryClient = useQueryClient();
 
   const {
@@ -55,9 +56,8 @@ const UploadComponent = () => {
         });
       });
       queryClient.invalidateQueries({ queryKey: ["recentCases"] });
-      setIsFinishedSummary(true);
-      setIsOrginalSummary(true);
-      setIsRefinedSummary(false);
+
+      setSummaryType("original");
     },
   });
 
@@ -171,26 +171,27 @@ const UploadComponent = () => {
 
   const { complete, completion } = useCompletion({
     api: "/api/summarize/refine-summary",
-    onFinish: async (completion) => {
+
+    onFinish: async (summary) => {
       const recentCases = queryClient.getQueryData<Case[]>(["recentCases"]);
       const latestCase = recentCases?.[0];
-      console.log(latestCase);
+      // console.log(latestCase);
+      console.log(summary);
 
       if (latestCase) {
-        await StoreRefineSummary(completion, latestCase.casesummary.caseFileId);
+        await StoreRefineSummary(summary, latestCase.casesummary.caseFileId);
       }
     },
   });
   const handleSubmit = async () => {
     if (!file) return;
-    setIsOrginalSummary(true);
-    setIsRefinedSummary(false);
+    setSummaryType("original");
     await uploadMutation.mutateAsync();
   };
 
   const handleRefinedSummary = async (refinedText: string) => {
-    setIsRefinedSummary(true);
-    setIsOrginalSummary(false);
+    setSummaryType("refined");
+    setRefinedSummary(refinedText);
     complete(refinedText);
   };
 
@@ -283,16 +284,16 @@ const UploadComponent = () => {
           {messages &&
           messages.filter((data) => data.role === "assistant").length > 0 ? (
             <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-headings:mb-2 prose-headings:mt-4 text-foreground prose-pre:p-0 max-w-full">
-              {status === "streaming" ||
-                (isfinishedSummary && (
-                  <RefinedSummaryButton
-                    isFinishedSummary={isfinishedSummary}
-                    onRefinedSummary={handleRefinedSummary}
-                    originalSummary={originalSummary}
-                  />
-                ))}
+              {status === "ready" && (
+                <RefinedSummaryButton
+                  isRefinedSummaryDone={summaryType === "refined"}
+                  isOriginalSummaryDone={summaryType === "original"}
+                  onRefinedSummary={handleRefinedSummary}
+                  originalSummary={originalSummary}
+                />
+              )}
 
-              {isorginalSummary && !isRefinedSummary && (
+              {summaryType === "original" && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-border pb-2">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
@@ -303,7 +304,8 @@ const UploadComponent = () => {
                   <ReactMarkdown>{originalSummary.toString()}</ReactMarkdown>
                 </div>
               )}
-              {isRefinedSummary && !isorginalSummary && (
+
+              {summaryType === "refined" && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-border pb-2">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
