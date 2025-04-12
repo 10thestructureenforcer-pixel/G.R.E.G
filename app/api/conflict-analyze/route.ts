@@ -1,7 +1,5 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
-import { openai } from "@ai-sdk/openai";
-import { generateText, streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

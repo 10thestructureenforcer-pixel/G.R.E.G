@@ -12,7 +12,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!session?.user || !session.user.id) {
     return;
   }
-  console.log("the id ", id);
+  // console.log("the id ", id);
 
   const initalMessages = await prisma.message.findMany({
     where: {

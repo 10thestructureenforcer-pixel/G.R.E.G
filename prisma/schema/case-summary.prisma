@@ -8,6 +8,7 @@ model CaseSummary {
   id         String   @id  @default(uuid())
   caseFileId String  @unique
   summary    String   
+  refinedSummary String?
   createdAt  DateTime @default(now())
   status     STATUS @default(FAILED)
   casefile   CaseFile @relation(fields: [caseFileId], references: [id], onDelete: Cascade) 

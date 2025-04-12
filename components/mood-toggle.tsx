@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();
 
+  React.useEffect(() => {}, [theme]);
+
   return (
     <Button
       variant="outline"

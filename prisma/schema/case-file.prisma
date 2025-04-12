@@ -9,8 +9,5 @@ model CaseFile{
     updatedAt   DateTime @updatedAt
     casesummary CaseSummary?
 
-   
-
-
     @@map("case_files")
 }

@@ -1,13 +1,14 @@
 "use client";
-import { FileIcon, Loader2 } from "lucide-react";
+import { FileIcon } from "lucide-react";
 import React, { useState } from "react";
 import { FiUpload, FiFile } from "react-icons/fi";
-import { useChat } from "@ai-sdk/react";
+import { useChat, useCompletion } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import AnimatedQuotes from "./animated-quotes";
+import RefinedSummaryButton from "./refined-summary-button";
+import { StoreRefineSummary } from "@/actions/store-refined-summary";
 
 interface CaseSummary {
   status: "PENDING" | "SUCCESS" | "FAILED";
@@ -24,8 +25,10 @@ interface Case {
 const UploadComponent = () => {
   const [file, setFile] = useState<FileList | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isfinishedSummary, setIsFinishedSummary] = useState<boolean>(false);
+  const [isorginalSummary, setIsOrginalSummary] = useState<boolean>(false);
+  const [isRefinedSummary, setIsRefinedSummary] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const {
     messages,
@@ -51,7 +54,10 @@ const UploadComponent = () => {
           return case_;
         });
       });
-      router.refresh();
+      queryClient.invalidateQueries({ queryKey: ["recentCases"] });
+      setIsFinishedSummary(true);
+      setIsOrginalSummary(true);
+      setIsRefinedSummary(false);
     },
   });
 
@@ -159,9 +165,33 @@ const UploadComponent = () => {
     }
   };
 
+  const originalSummary = messages.filter(
+    (data) => data.role === "assistant"
+  )[0]?.content;
+
+  const { complete, completion } = useCompletion({
+    api: "/api/summarize/refine-summary",
+    onFinish: async (completion) => {
+      const recentCases = queryClient.getQueryData<Case[]>(["recentCases"]);
+      const latestCase = recentCases?.[0];
+      console.log(latestCase);
+
+      if (latestCase) {
+        await StoreRefineSummary(completion, latestCase.casesummary.caseFileId);
+      }
+    },
+  });
   const handleSubmit = async () => {
     if (!file) return;
+    setIsOrginalSummary(true);
+    setIsRefinedSummary(false);
     await uploadMutation.mutateAsync();
+  };
+
+  const handleRefinedSummary = async (refinedText: string) => {
+    setIsRefinedSummary(true);
+    setIsOrginalSummary(false);
+    complete(refinedText);
   };
 
   return (
@@ -248,16 +278,42 @@ const UploadComponent = () => {
 
       <div className="w-full bg-background p-5 overflow-hidden flex flex-col">
         <h2 className="text-xl font-semibold mb-5 text-foreground">Summary</h2>
+
         <div className="p-6 bg-muted dark:bg-muted/50 rounded-md border min-h-[300px] flex-grow overflow-auto">
           {messages &&
           messages.filter((data) => data.role === "assistant").length > 0 ? (
             <div className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-headings:mb-2 prose-headings:mt-4 text-foreground prose-pre:p-0 max-w-full">
-              <ReactMarkdown>
-                {
-                  messages.filter((data) => data.role === "assistant")[0]
-                    ?.content
-                }
-              </ReactMarkdown>
+              {status === "streaming" ||
+                (isfinishedSummary && (
+                  <RefinedSummaryButton
+                    isFinishedSummary={isfinishedSummary}
+                    onRefinedSummary={handleRefinedSummary}
+                    originalSummary={originalSummary}
+                  />
+                ))}
+
+              {isorginalSummary && !isRefinedSummary && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-border pb-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <h3 className="text-base font-medium text-foreground">
+                      Original Summary
+                    </h3>
+                  </div>
+                  <ReactMarkdown>{originalSummary.toString()}</ReactMarkdown>
+                </div>
+              )}
+              {isRefinedSummary && !isorginalSummary && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-border pb-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <h3 className="text-base font-medium text-foreground">
+                      Refined Summary
+                    </h3>
+                  </div>
+                  <ReactMarkdown>{completion.toString()}</ReactMarkdown>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center">

@@ -10,7 +10,7 @@ const ResearchPage = async ({
 }) => {
   // const session = await auth();
   const { id } = await params;
-  console.log("the id ", id);
+  // console.log("the id ", id);
 
   const researchData = await prisma.caseFile.findFirst({
     where: {
@@ -22,33 +22,67 @@ const ResearchPage = async ({
         select: {
           status: true,
           summary: true,
+          refinedSummary: true,
         },
       },
     },
   });
   // console.log(researchData);
   return (
-    <div className="container mx-auto py-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 p-2">
-          {researchData?.casesummary?.status === "SUCCESS" && (
-            <ResearchSummary
-              title={"hello"}
-              summary={researchData.casesummary.summary}
-              fileName={researchData.title}
-            />
-          )}
-
-          {researchData?.casesummary?.status === "FAILED" && (
-            <div className=" text-black p-2 rounded-md">
-              <p>Failed to Generate Summary</p>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8 px-4">
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-foreground">
+              Case Analysis
+            </h1>
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium">File:</span> {researchData?.title}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* <div className="md:col-span-1">
-          <ResearchActions />
-        </div> */}
+          <div className="grid grid-cols-1 gap-8">
+            {researchData?.casesummary?.status === "SUCCESS" && (
+              <ResearchSummary
+                title={researchData.title}
+                summary={researchData.casesummary.summary}
+                fileName={researchData.title}
+                refinedSummary={
+                  researchData.casesummary.refinedSummary || undefined
+                }
+              />
+            )}
+
+            {researchData?.casesummary?.status === "FAILED" && (
+              <div className="bg-destructive/10 p-6 rounded-lg border border-destructive">
+                <div className="flex items-center gap-2 text-destructive">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <h3 className="text-lg font-semibold">
+                    Failed to Generate Summary
+                  </h3>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  There was an error processing your document. Please try again.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
