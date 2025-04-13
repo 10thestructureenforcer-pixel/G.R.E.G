@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
       Make sure and use context of original summary and add more details.
       `,
       onFinish: async (ans) => {
-        await StoreRefineSummary(ans.steps[0].text, caseId);
+        // console.log("ans is ", ans);
+        await StoreRefineSummary(ans.text, caseId);
       },
     });
 
