@@ -15,6 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { EditProfileName } from "@/actions/edit-profile-name";
+import toast from "react-hot-toast";
 
 interface SettingsClientProps {
   user: any;
@@ -24,13 +31,33 @@ export default function SettingsClient({
   user: initialUser,
 }: SettingsClientProps) {
   const [user, setUser] = useState(initialUser);
+  const [name, setName] = useState<string>(user.name);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedClient, setSelectedClient] = useState("");
+  const queryClient = useQueryClient();
 
   const handleSave = () => {
     // TODO: Implement save functionality
     setIsEditing(false);
+    mutate();
   };
+
+  const { mutate, data, isPending } = useMutation({
+    mutationKey: ["edit-name"],
+    mutationFn: async () => {
+      const res = await EditProfileName(name);
+      return res;
+    },
+    onSuccess: (data) => {
+      setUser((prev: any) => ({
+        ...prev,
+        name,
+      }));
+      setIsEditing(false);
+      if (data.status == "success") {
+        toast.success(data.message);
+      }
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -57,7 +84,7 @@ export default function SettingsClient({
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-medium">{user.name}</h3>
+                <h3 className="font-medium">{name}</h3>
                 <p className="text-sm text-muted-foreground">
                   Your profile picture
                 </p>
@@ -70,12 +97,14 @@ export default function SettingsClient({
                 {isEditing ? (
                   <Input
                     id="name"
-                    value={user.name}
-                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
                 ) : (
                   <div className="p-2 rounded-md border-2 cursor-pointer hover:bg-muted transition-colors">
-                    <p className="text-sm">{user.name}</p>
+                    <p className="text-sm">{name}</p>
                   </div>
                 )}
               </div>
