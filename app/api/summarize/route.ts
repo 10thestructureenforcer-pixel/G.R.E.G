@@ -1,15 +1,15 @@
-import { auth } from "@/auth";
-import prisma from "@/lib/db";
-import { extractTextFromFile } from "@/lib/text-extract";
-import { NextRequest, NextResponse } from "next/server";
-import { ChatOpenAI } from "@langchain/openai";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { LangChainAdapter } from "ai";
-import { getSupabaseUrl } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { auth } from '@/auth';
+import prisma from '@/lib/db';
+import { extractTextFromFile } from '@/lib/text-extract';
+import { NextRequest, NextResponse } from 'next/server';
+import { ChatOpenAI } from '@langchain/openai';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { createStuffDocumentsChain } from 'langchain/chains/combine_documents';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import { PromptTemplate } from '@langchain/core/prompts';
+import { LangChainAdapter } from 'ai';
+import { getSupabaseUrl } from '@/lib/supabase';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,39 +28,39 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({
-        error: "No user found",
+        error: 'No user found',
       });
     }
 
     const attachments = body.messages[0].experimental_attachments;
 
     if (!attachments || attachments.length === 0) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
     const attachment = attachments[0];
     // console.log("the atatchment is ", attachment);
 
-    if (!attachment.url || !attachment.url.startsWith("data:")) {
+    if (!attachment.url || !attachment.url.startsWith('data:')) {
       return NextResponse.json(
-        { error: "Invalid file format" },
-        { status: 400 }
+        { error: 'Invalid file format' },
+        { status: 400 },
       );
     }
 
-    const base64Data = attachment.url.split(",")[1];
-    const fileBuffer = Buffer.from(base64Data, "base64");
-    console.log("Filebuffer", fileBuffer);
+    const base64Data = attachment.url.split(',')[1];
+    const fileBuffer = Buffer.from(base64Data, 'base64');
+    console.log('Filebuffer', fileBuffer);
     const fileType =
-      attachment.contentType || attachment.url.split(";")[0].split(":")[1];
+      attachment.contentType || attachment.url.split(';')[0].split(':')[1];
 
     const fileName =
-      attachment.name || `file-${Date.now()}.${fileType.split("/")[1]}`;
+      attachment.name || `file-${Date.now()}.${fileType.split('/')[1]}`;
 
     const supabaseUploadUrl = await getSupabaseUrl(
       fileBuffer,
       fileName,
-      fileType
+      fileType,
     );
     // console.log("the supabase url", supabaseUploadUrl.fileUrl);
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    revalidatePath("/research");
+    revalidatePath('/research');
     // redirect("/research");
 
     const textcontent = await extractTextFromFile(fileBuffer, fileType);
@@ -83,9 +83,8 @@ export async function POST(request: NextRequest) {
       chunkOverlap: 200,
     });
     const splitDocs = await splitter.splitDocuments(textcontent);
-    // console.log(splitDocs);
 
-    const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
+    const fileContent = splitDocs.map((doc) => doc.pageContent).join('\n');
     console.log(fileContent);
 
     // // Create initial CaseSummary record
@@ -98,30 +97,73 @@ export async function POST(request: NextRequest) {
     // });
 
     const llmSummary = new ChatOpenAI({
-      model: "gpt-4o-mini",
+      model: 'gpt-4o-mini',
       temperature: 0.3,
     });
 
     const summaryRefineTemplate = `
-  You are an expert in analyzing and summarizing complex documents, including legal, technical, and academic materials. Your task is to refine and improve an existing summary based on newly provided content from the document.
+  You are an expert multilingual document analyst and summarizer, specializing in creating comprehensive, well-structured summaries of complex documents. Your task is to analyze and summarize content while maintaining high accuracy and clarity.
 
 Input:
 
-Existing Partial or Initial Summary: {existing_answer}
+Previous Summary: {existing_answer}
+New Content to Analyze: {context}
 
-New Additional Content from the Document: {context}
+Instructions for Analysis and Summary:
 
-Instructions:
-Start sumamry by mentioning the citation at the top of summary and then continue with the summary.
+1. Language Detection and Handling:
+   - First, identify the primary language of the document
+   - If non-English, begin with: "Original Language: [Language Name] | English Summary Follows"
+   - Provide all summaries in clear, professional English
 
-Review the existing summary and the new content provided.
+2. Document Structure Analysis:
+   - Start with complete citation/reference details if available
+   - Identify document type (legal, academic, technical, business, etc.)
+   - Note key sections and their hierarchy
 
-Incorporate relevant information from the new document content to improve the original summary.
+3. Content Summary Requirements:
+   - Begin with a one-paragraph executive summary (2-3 sentences)
+   - Organize main points in a clear, hierarchical structure
+   - Include all critical facts, figures, and dates
+   - Preserve important quotes, using "..." for direct quotations
+   - Maintain technical accuracy while ensuring accessibility
 
-Ensure the final summary is clear, concise, and complete, maintaining the tone and focus of the original summary.
+4. Key Elements to Extract and Highlight:
+   - Main arguments or findings
+   - Critical dates and deadlines
+   - Key stakeholders or parties involved
+   - Important numerical data or statistics
+   - Significant conclusions or recommendations
+   - Any crucial legal, technical, or procedural requirements
 
-Your goal is to provide a refined, well-organized summary that effectively communicates the essential details of the entire document, focusing on key points while maintaining a legal, technical, or academic tone. 
-Extarct Citation details from the document and start  with the citation details in the summary.
+5. Format and Structure:
+   Executive Summary:
+   [2-3 sentence overview]
+
+   Key Points:
+   • [Main Point 1]
+   • [Main Point 2]
+   • [Main Point 3]
+
+   Detailed Analysis:
+   [Organized breakdown of major sections and findings]
+
+   Important Details:
+   - [Critical detail 1]
+   - [Critical detail 2]
+   - [Critical detail 3]
+
+   Conclusions/Recommendations (if applicable):
+   [Summary of conclusions or key takeaways]
+
+6. Quality Guidelines:
+   - Maintain objectivity and professional tone
+   - Ensure accuracy in technical terms and concepts
+   - Preserve the original meaning while making content accessible
+   - Highlight any uncertainties or areas needing clarification
+   - Keep the summary concise but comprehensive
+
+Remember: Focus on accuracy, clarity, and maintaining the document's essential meaning while making it accessible to English readers. If technical terms are used, provide brief explanations where necessary.
     `;
 
     const prompt = PromptTemplate.fromTemplate(summaryRefineTemplate);
@@ -134,10 +176,10 @@ Extarct Citation details from the document and start  with the citation details 
     try {
       const stream = await summarizeChain.stream({
         context: splitDocs,
-        existing_answer: "",
+        existing_answer: '',
       });
 
-      console.log("Summarization streaming started");
+      console.log('Summarization streaming started');
 
       return LangChainAdapter.toDataStreamResponse(stream, {
         callbacks: {
@@ -145,35 +187,36 @@ Extarct Citation details from the document and start  with the citation details 
             await prisma.caseSummary.create({
               data: {
                 summary: completion,
-                status: "SUCCESS",
+                status: 'SUCCESS',
                 caseFileId: updatedsupabaseUrl.id,
               },
             });
+            console.log('Summary saved successfully');
           },
         },
       });
     } catch (error) {
-      console.error("Chain error:", error);
+      console.error('Chain error:', error);
       await prisma.caseSummary.update({
         where: {
           caseFileId: updatedsupabaseUrl.id,
         },
         data: {
-          status: "FAILED",
+          status: 'FAILED',
         },
       });
       return NextResponse.json(
         {
-          error: "Failed to summarize document",
+          error: 'Failed to summarize document',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
-    console.error("Error processing request:", error);
+    console.error('Error processing request:', error);
     return NextResponse.json(
-      { error: "Failed to process request" },
-      { status: 500 }
+      { error: 'Failed to process request' },
+      { status: 500 },
     );
   }
 }
