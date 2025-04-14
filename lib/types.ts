@@ -34,6 +34,7 @@ export interface Client {
   id: string;
   clientFirstName: string;
   clientLastName: string;
+  clientMiddleName: string | null;
   clientEmail: string;
   clientAddress: string;
   clientPhone: string;
@@ -46,6 +47,7 @@ export interface Client {
   opposingParty: string;
   userId: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Conflict {
@@ -72,4 +74,13 @@ export interface VisaHistoryType {
   clientName: string;
   clientId: string;
   gptOutput: string;
+}
+
+export interface SettingsUser {
+  id: string;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+  isPro: boolean;
+  client: Client[];
 }

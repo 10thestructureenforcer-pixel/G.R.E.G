@@ -1,13 +1,15 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import SettingsClient from "./settings-client";
+
 import prisma from "@/lib/db";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SettingsUser } from "@/lib/types";
+import SettingsClient from "@/components/dashboard/settings/settings-client";
 
 function SettingsSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="grid gap-6 md:grid-cols-2">
         {/* Profile Card Skeleton */}
         <div className="rounded-lg border p-6">
@@ -61,35 +63,57 @@ function SettingsSkeleton() {
   );
 }
 
-export default async function SettingsPage() {
+async function SettingsPage() {
   const session = await auth();
 
   if (!session?.user) {
     redirect("/login");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-    include: {
-      client: true,
-    },
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      include: {
+        client: true,
+      },
+    });
 
-  return (
-    <div className="p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Settings</h1>
-          <div className="text-sm text-muted-foreground">
-            Total Clients: {user?.client.length}
+    if (!user) {
+      return <div>No user found</div>;
+    }
+
+    const settingsUser: SettingsUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      isPro: user.isPro,
+      client: user.client,
+    };
+
+    return (
+      <div className="p-2">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">Settings</h1>
           </div>
+
+          <SettingsClient user={settingsUser} />
         </div>
-        <Suspense fallback={<SettingsSkeleton />}>
-          <SettingsClient user={user} />
-        </Suspense>
       </div>
-    </div>
+    );
+  } catch (error) {
+    console.error("Error fetching user settings:", error);
+    throw new Error("Failed to load settings");
+  }
+}
+
+export default function SettingsPageWrapper() {
+  return (
+    <Suspense fallback={<SettingsSkeleton />}>
+      <SettingsPage />
+    </Suspense>
   );
 }

@@ -2,6 +2,10 @@ import React, { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import ConflictAnalyzerTool from "@/components/dashboard/ethics/conflict-analyzer-tool";
 
+const ConflictAnalyzerToolComponent = () => {
+  return <ConflictAnalyzerTool />;
+};
+
 const Page = async () => {
   return (
     <Suspense
@@ -13,7 +17,7 @@ const Page = async () => {
         </div>
       }
     >
-      <ConflictAnalyzerTool />
+      <ConflictAnalyzerToolComponent />
     </Suspense>
   );
 };

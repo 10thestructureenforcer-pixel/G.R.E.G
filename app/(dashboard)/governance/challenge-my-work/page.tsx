@@ -13,6 +13,16 @@ function LoadingSpinner() {
 }
 
 export default async function Page() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <div className="container mx-auto p-4">
+        <ChallengeMyWorkPromise />
+      </div>
+    </Suspense>
+  );
+}
+
+const ChallengeMyWorkPromise = async () => {
   const session = await auth();
   if (!session) {
     return <div>Not authorized</div>;
@@ -26,10 +36,8 @@ export default async function Page() {
     },
   });
   return (
-    <div className="container mx-auto p-4">
-      <Suspense fallback={<LoadingSpinner />}>
-        <ChallengeMyWork clients={clients} />
-      </Suspense>
+    <div>
+      <ChallengeMyWork clients={clients} />
     </div>
   );
-}
+};

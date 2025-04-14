@@ -4,9 +4,10 @@ import Cards from "@/components/dashboard/main-dashboard/cards";
 import ClientInfoButton from "@/components/dashboard/main-dashboard/client-info-button";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import prisma from "@/lib/db";
-import { FileText, Plane, Scale3d, Workflow } from "lucide-react";
+import { FileText, Loader2, Plane, Scale3d, Workflow } from "lucide-react";
+import { Suspense } from "react";
 
-const page = async () => {
+const DashboardPromise = async () => {
   const session = await auth();
   const userName = session?.user?.name || "User";
 
@@ -26,12 +27,20 @@ const page = async () => {
     },
   });
 
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session?.user?.id,
+    },
+  });
+
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
       <div className="mb-8 md:mb-12">
         <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back,{" "}
-          <span className="text-green-500 dark:text-green-400">{userName}</span>{" "}
+          <span className="text-green-500 dark:text-green-400">
+            {user?.name ?? "User"}
+          </span>{" "}
           👋
         </CardTitle>
         <CardDescription className="text-base md:text-lg">
@@ -71,4 +80,20 @@ const page = async () => {
   );
 };
 
-export default page;
+const DashboardSuspense = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full h-[50vh] flex items-center justify-center">
+          <div className="flex items-center gap-2 text-green-600">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        </div>
+      }
+    >
+      <DashboardPromise />
+    </Suspense>
+  );
+};
+
+export default DashboardSuspense;

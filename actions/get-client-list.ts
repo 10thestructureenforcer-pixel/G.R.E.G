@@ -16,9 +16,6 @@ export async function getClientList() {
       orderBy: {
         createdAt: "desc",
       },
-      omit: {
-        updatedAt: true,
-      },
     });
     return clientList;
   } catch (e) {
