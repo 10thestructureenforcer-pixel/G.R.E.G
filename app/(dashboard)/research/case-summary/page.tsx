@@ -41,7 +41,7 @@ const ResearchCaseSummary = async () => {
   );
 };
 
-export async function ResearchCaseSummarySuspense() {
+async function ResearchCaseSummarySuspense() {
   return (
     <Suspense
       fallback={
