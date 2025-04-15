@@ -1,15 +1,12 @@
 // import { ResearchActions } from "@/components/dashboard/research/research-actions";
 import { ResearchSummary } from "@/components/dashboard/research/research-summary";
 import prisma from "@/lib/db";
-import React from "react";
+import { Loader2 } from "lucide-react";
+import React, { Suspense } from "react";
 
-const ResearchPage = async ({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) => {
+const ResearchPage = async ({ id }: { id: string }) => {
   // const session = await auth();
-  const { id } = await params;
+
   // console.log("the id ", id);
 
   const researchData = await prisma.caseFile.findFirst({
@@ -88,4 +85,21 @@ const ResearchPage = async ({
   );
 };
 
-export default ResearchPage;
+export default async function CaseSummaryPageSuspense({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="h-10 w-10 animate-spin text-green-500" />
+        </div>
+      }
+    >
+      <ResearchPage id={id} />
+    </Suspense>
+  );
+}

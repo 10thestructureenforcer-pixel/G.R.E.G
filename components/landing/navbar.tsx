@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -11,10 +11,25 @@ import Link from "next/link";
 const Navbar = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  // const logo =
+  //   theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
 
   const logo =
-    theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
+    theme === "dark"
+      ? "/logos/logo_dark_mode.png"
+      : theme === "light"
+      ? "/logos/greg_final.png"
+      : "/logos/greg_final.png";
+
+  // useEffect(() => {
+  //   setTheme(theme === "dark" ? "light" : "dark");
+  //   console.log("hhhh");
+  // }, []);
+
+  // const logo =
+  //   theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
   const isDashboardRoute = pathname.startsWith("/dashboard");
 
   return (

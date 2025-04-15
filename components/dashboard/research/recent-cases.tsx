@@ -43,7 +43,7 @@ const RecentCasesList = ({ recentCases }: RecentCasesInterface) => {
                 key={data.id}
                 onClick={() => {
                   if (!isLoading && data.casesummary?.status !== "PENDING") {
-                    router.push(`/research/${data.id}`);
+                    router.push(`/research/case-summary/${data.id}`);
                   }
                 }}
                 className={`flex items-center p-4 bg-muted dark:bg-muted/50 rounded-md border border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors duration-200 ${

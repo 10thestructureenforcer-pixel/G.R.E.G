@@ -59,7 +59,8 @@ model User {
   chat          Chat[]
   client        Client[]
   visaComparison VisaComparison[]
- 
+  feedback      Feedback[]
+
   @@map("users")
 }
  

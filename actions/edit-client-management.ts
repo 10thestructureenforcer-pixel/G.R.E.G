@@ -1,12 +1,14 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { Client } from "@/lib/types";
+import { Client, SettingsUser } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 
 type Result = {
   status: "success" | "error";
   message: string;
-  data?: any;
+  data?: Client;
+  client?: Client[];
 };
 
 export async function editClientManagement(
@@ -14,7 +16,7 @@ export async function editClientManagement(
   updatedClient: Partial<Client>
 ): Promise<Result> {
   try {
-    const client = await prisma.client.update({
+    const res = await prisma.client.update({
       where: {
         id: clientId,
       },
@@ -33,12 +35,24 @@ export async function editClientManagement(
         sponsorCompany: updatedClient.sponsorCompany,
         opposingParty: updatedClient.opposingParty,
       },
+      include: {
+        user: {
+          include: {
+            client: true,
+          },
+        },
+      },
     });
+
+    const { user } = res;
+
+    // revalidatePath("/dashboard/settings");
 
     return {
       status: "success",
       message: "Client updated successfully",
-      data: client,
+      data: res,
+      client: user.client,
     };
   } catch (error) {
     console.error("Error updating client:", error);

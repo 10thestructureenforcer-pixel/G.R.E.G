@@ -48,12 +48,14 @@ const ClientManagement = ({ user }: SettingsClientProps) => {
   const [selectedClient, setSelectedClient] = useState<string>("");
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [currentClient, setCurrentClient] = useState<Client>({} as Client);
+  const [currentUser, setCurrentUser] = useState<Client[]>(user.client);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     setValue,
+
     formState: { errors },
     reset,
   } = useForm<ClientFormData>({
@@ -82,14 +84,17 @@ const ClientManagement = ({ user }: SettingsClientProps) => {
       return res;
     },
 
+    onMutate: () => {
+      setSelectedClient("");
+    },
+
     onSuccess: (data) => {
       if (data.status === "success") {
         toast.success(data.message);
+        setCurrentUser(data.client ?? []);
       } else {
         toast.error(data.message);
       }
-      setSelectedClient("");
-      router.refresh();
     },
   });
 
@@ -100,10 +105,9 @@ const ClientManagement = ({ user }: SettingsClientProps) => {
         ...prev,
         ...data,
       }));
-      Object.entries(data).forEach(([key, value]) => {
-        setValue(key as keyof ClientFormData, value);
-      });
+
       setIsEditingClient(false);
+      reset();
     } catch (error) {
       toast.error("Failed to update client information");
     }
@@ -137,7 +141,7 @@ const ClientManagement = ({ user }: SettingsClientProps) => {
                     <SelectValue placeholder="Select a client" />
                   </SelectTrigger>
                   <SelectContent>
-                    {user.client.map((client) => (
+                    {currentUser.map((client) => (
                       <SelectItem key={client.id} value={client.id}>
                         {`${client.clientFirstName} ${client.clientLastName}`}
                       </SelectItem>

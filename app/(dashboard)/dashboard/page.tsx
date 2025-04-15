@@ -9,29 +9,28 @@ import { Suspense } from "react";
 
 const DashboardPromise = async () => {
   const session = await auth();
-  const userName = session?.user?.name || "User";
-
-  const totalCases = await prisma.caseFile.count({
-    where: {
-      uploadedBy: {
-        id: session?.user?.id,
-      },
-    },
-  });
-
-  const totalVisaComparisons = await prisma.visaComparison.count({
-    where: {
-      user: {
-        id: session?.user?.id,
-      },
-    },
-  });
 
   const user = await prisma.user.findUnique({
     where: {
       id: session?.user?.id,
     },
+    include: {
+      case_file: true,
+      visaComparison: true,
+    },
   });
+  if (!user) {
+    return (
+      <div>
+        <div>
+          <h1>No user found</h1>
+        </div>
+      </div>
+    );
+  }
+
+  const totalNumberOfCases = user?.case_file.length;
+  const totalNumberOfVisaComparisons = user?.visaComparison.length;
 
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
@@ -56,22 +55,22 @@ const DashboardPromise = async () => {
       {/* <ChatUI /> */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Cards
-          totalCases={totalCases}
+          totalCases={totalNumberOfCases}
           title="Research insights"
           icon={<FileText />}
         />
         <Cards
-          totalCases={totalVisaComparisons}
+          totalCases={totalNumberOfVisaComparisons}
           title="Guidance Overview"
           icon={<Plane />}
         />
         <Cards
-          totalCases={totalCases}
+          totalCases={totalNumberOfCases}
           title="Ethics usage"
           icon={<Scale3d />}
         />
         <Cards
-          totalCases={totalCases}
+          totalCases={totalNumberOfVisaComparisons}
           title="Governance & Compliance"
           icon={<Workflow />}
         />
