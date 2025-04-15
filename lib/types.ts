@@ -84,3 +84,16 @@ export interface SettingsUser {
   isPro: boolean;
   client: Client[];
 }
+
+export interface RecentChallengeWork {
+  id: string;
+  userId: string;
+  clientId: string;
+  draftContent: string;
+  clientName: string;
+  responseType: string;
+  challengeWorkOutput: string;
+  refinedOutput: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

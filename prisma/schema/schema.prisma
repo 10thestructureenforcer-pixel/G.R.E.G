@@ -60,6 +60,7 @@ model User {
   client        Client[]
   visaComparison VisaComparison[]
   feedback      Feedback[]
+  challengeWork  ChallengeWork[]
 
   @@map("users")
 }

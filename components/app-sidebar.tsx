@@ -72,8 +72,8 @@ const items = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { theme } = useTheme();
-  const logo =
-    theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
+  const darkLogo = "/logos/logo_dark_mode.png";
+  const lightLogo = "/logos/greg_final.png";
 
   return (
     <Sidebar
@@ -83,13 +83,11 @@ export function AppSidebar() {
       <SidebarHeader className="overflow-hidden">
         <div className="flex items-center p-2">
           <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px] bg-background rounded-lg">
-            <Image
-              src={logo}
-              alt="logo"
-              width={70}
-              height={70}
-              className="object-contain "
-            />
+            {theme === "dark" ? (
+              <Image src={darkLogo} alt="logo" width={70} height={70} />
+            ) : (
+              <Image src={lightLogo} alt="logo" width={70} height={70} />
+            )}
           </div>
         </div>
       </SidebarHeader>

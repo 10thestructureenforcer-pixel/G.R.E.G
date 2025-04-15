@@ -16,12 +16,8 @@ const Navbar = () => {
   // const logo =
   //   theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
 
-  const logo =
-    theme === "dark"
-      ? "/logos/logo_dark_mode.png"
-      : theme === "light"
-      ? "/logos/greg_final.png"
-      : "/logos/greg_final.png";
+  const darkLogo = "/logos/logo_dark_mode.png";
+  const lightLogo = "/logos/greg_final.png";
 
   // useEffect(() => {
   //   setTheme(theme === "dark" ? "light" : "dark");
@@ -39,14 +35,15 @@ const Navbar = () => {
           {/* Logo section - left side */}
           {!isDashboardRoute && (
             <div className="relative overflow-hidden group cursor-pointer w-[50px] h-[50px] md:w-[75px] bg-background  md:h-[70px] rounded-md  ">
-              <Image
-                src={logo}
-                alt="logo"
-                width={90}
-                height={90}
-                className="object-contain bg-background "
-                priority
-              />
+              {theme === "dark" ? (
+                <>
+                  <Image src={darkLogo} alt="logo" width={90} height={90} />
+                </>
+              ) : (
+                <>
+                  <Image src={lightLogo} alt="logo" width={90} height={90} />
+                </>
+              )}
             </div>
           )}
 
@@ -66,7 +63,7 @@ const Navbar = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="dark:bg-green-500 bg-green-500 text-black hover:bg-green-600 h-9 shadow cursor-pointer text-sm md:text-base"
+                    className="dark:bg-green-500 bg-green-500  hover:dark:bg-green-600 text-white hover:dark:text-black hover:bg-green-600 h-9 shadow cursor-pointer text-sm md:text-base"
                   >
                     Dashboard
                   </Button>

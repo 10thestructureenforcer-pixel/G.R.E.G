@@ -1,0 +1,15 @@
+model ChallengeWork{
+    id String @id @default(uuid())
+    userId String
+    clientId String
+    draftContent String
+    clientName String
+    responseType String
+    challengeWorkOutput String
+    refinedOutput String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user User @relation(fields: [userId], references: [id]) 
+}
+

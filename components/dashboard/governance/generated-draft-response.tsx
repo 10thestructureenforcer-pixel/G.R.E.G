@@ -1,32 +1,32 @@
 "use client";
-import React, { useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { cn } from "@/lib/utils";
+import React, { useState } from "react";
+import { useCompletion } from "@ai-sdk/react";
+import { Button } from "@/components/ui/button";
+import { Wand2, Download, Loader2 } from "lucide-react";
+import ReactMarkdownComponent from "./react-markdown";
+
 // import generatePDF from "react-to-pdf";
 
 interface GeneratedDraftResponseProps {
   data: string;
+  isLoadingWork: boolean;
+  id: string;
 }
 
 const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
   data,
+  isLoadingWork,
+  id,
 }) => {
-  // const contentRef = useRef<HTMLDivElement>(null);
+  const [isRefineWorkLoading, setIsRefineWorkLoading] = useState(false);
 
-  // const handleDownloadPDF = () => {
-  //   if (!contentRef.current) return;
-
-  //   const options = {
-  //     filename: `draft-response-${new Date().toISOString().split("T")[0]}.pdf`,
-  //     page: {
-  //       margin: 20,
-  //       format: "A4",
-  //     },
-  //   };
-
-  //   generatePDF(contentRef, options);
-  // };
+  const { completion, complete, isLoading } = useCompletion({
+    api: "/api/challenge-work/refine-version",
+    body: {
+      challengeWorkOutput: data,
+      id: id,
+    },
+  });
 
   if (!data) {
     return (
@@ -34,6 +34,11 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
         No content available
       </div>
     );
+  }
+
+  async function handleRefineResponse() {
+    setIsRefineWorkLoading(true);
+    await complete("");
   }
 
   return (
@@ -45,133 +50,49 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
         >
           Download as PDF
         </button> */}
+
+        <div className="flex justify-end gap-2 mb-4">
+          <Button
+            onClick={handleRefineResponse}
+            className="bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer dark:text-black"
+            disabled={isLoadingWork || isRefineWorkLoading}
+          >
+            <Wand2 className="w-4 h-4 mr-2" />
+            Refine Response
+          </Button>
+        </div>
         <div>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              h1: ({ className, ...props }) => (
-                <h1
-                  className={cn(
-                    "mt-4 sm:mt-6 md:mt-8 scroll-m-20 text-2xl sm:text-3xl font-bold tracking-tight text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              h2: ({ className, ...props }) => (
-                <h2
-                  className={cn(
-                    "mt-4 sm:mt-6 md:mt-8 scroll-m-20 text-xl sm:text-2xl font-semibold tracking-tight text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              h3: ({ className, ...props }) => (
-                <h3
-                  className={cn(
-                    "mt-3 sm:mt-4 md:mt-6 scroll-m-20 text-lg sm:text-xl font-semibold tracking-tight text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              p: ({ className, ...props }) => (
-                <p
-                  className={cn(
-                    "leading-6 sm:leading-7 text-sm sm:text-base [&:not(:first-child)]:mt-4 sm:mt-6 text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              ul: ({ className, ...props }) => (
-                <ul
-                  className={cn(
-                    "my-4 sm:my-6 ml-4 sm:ml-6 list-disc text-sm sm:text-base text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              ol: ({ className, ...props }) => (
-                <ol
-                  className={cn(
-                    "my-4 sm:my-6 ml-4 sm:ml-6 list-decimal text-sm sm:text-base text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              li: ({ className, ...props }) => (
-                <li
-                  className={cn(
-                    "mt-1 sm:mt-2 text-sm sm:text-base text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              blockquote: ({ className, ...props }) => (
-                <blockquote
-                  className={cn(
-                    "mt-4 sm:mt-6 border-l-2 pl-4 sm:pl-6 italic text-sm sm:text-base text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              code: ({ className, ...props }) => (
-                <code
-                  className={cn(
-                    "relative rounded bg-gray-100 dark:bg-gray-800 px-[0.3rem] py-[0.2rem] font-mono text-xs sm:text-sm text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              pre: ({ className, ...props }) => (
-                <pre
-                  className={cn(
-                    "mt-4 sm:mt-6 mb-4 overflow-x-auto rounded-lg bg-gray-100 dark:bg-gray-800 p-3 sm:p-4 text-xs sm:text-sm text-left",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              table: ({ className, ...props }) => (
-                <div className="my-4 sm:my-6 w-full overflow-x-auto">
-                  <table
-                    className={cn(
-                      "w-full text-sm sm:text-base text-left",
-                      className
-                    )}
-                    {...props}
-                  />
-                </div>
-              ),
-              th: ({ className, ...props }) => (
-                <th
-                  className={cn(
-                    "border px-2 sm:px-4 py-1.5 sm:py-2 text-left font-bold text-sm sm:text-base",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
-              td: ({ className, ...props }) => (
-                <td
-                  className={cn(
-                    "border px-2 sm:px-4 py-1.5 sm:py-2 text-left text-sm sm:text-base",
-                    className
-                  )}
-                  {...props}
-                />
-              ),
+          {isLoadingWork ? (
+            <Loader2 className="w-10 h-10 animate-spin text-green-400 mx-auto" />
+          ) : isRefineWorkLoading ? (
+            <ReactMarkdownComponent data={completion} />
+          ) : (
+            <ReactMarkdownComponent data={data} />
+          )}
+        </div>
+        <div className="flex justify-end mt-6">
+          {/* <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => {
+              const blob = new Blob([isRefineWorkLoading ? completion : data], {
+                type: "text/markdown",
+              });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `draft-response-${
+                new Date().toISOString().split("T")[0]
+              }.md`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
             }}
           >
-            {data}
-          </ReactMarkdown>
+            <Download className="w-4 h-4" />
+            Download Markdown
+          </Button> */}
         </div>
       </div>
     </div>

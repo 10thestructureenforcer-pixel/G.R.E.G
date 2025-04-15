@@ -1,10 +1,39 @@
+import { auth } from "@/auth";
+import prisma from "@/lib/db";
+import { Client } from "@/lib/types";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
+type ReviewRequestBody = {
+  type: string;
+  client: Client;
+  content: string;
+};
+
 export async function POST(req: NextRequest) {
   try {
-    const { type, client, content } = await req.json();
+    const session = await auth();
+    const userId = session?.user?.id;
+    const { type, client, content }: ReviewRequestBody = await req.json();
+
+    const { id, clientFirstName, clientLastName } = client;
+    const clientId = id;
+    const clientName = `${clientFirstName} ${clientLastName}`;
+
+    if (!type || !client || !content) {
+      return NextResponse.json({
+        status: "error",
+        message: "Missing required fields",
+      });
+    }
+
+    if (!userId) {
+      return NextResponse.json({
+        status: "error",
+        message: "Unauthorized",
+      });
+    }
 
     const stream = await streamText({
       model: openai("gpt-4o-mini"),
@@ -38,6 +67,19 @@ ${content}
 
       
       `,
+      onFinish: async (data) => {
+        const challenges = data.text;
+        await prisma.challengeWork.create({
+          data: {
+            userId: userId,
+            clientId: clientId,
+            draftContent: content,
+            responseType: type,
+            challengeWorkOutput: challenges,
+            clientName: clientName,
+          },
+        });
+      },
     });
     return stream.toDataStreamResponse();
   } catch (e) {
