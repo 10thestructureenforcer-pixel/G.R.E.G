@@ -10,7 +10,7 @@ const Page = async () => {
   const clients = await prisma.client.findMany({
     where: {
       user: {
-        email: session?.user?.email,
+        id: session?.user?.id,
       },
     },
   });

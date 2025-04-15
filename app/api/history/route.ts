@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const chathistory = await prisma.chat.findMany({
       where: {
         User: {
-          email: session.user.email,
+          id: session.user.id,
         },
       },
       orderBy: {

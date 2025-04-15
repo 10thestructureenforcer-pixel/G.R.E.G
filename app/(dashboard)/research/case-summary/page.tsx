@@ -10,7 +10,7 @@ const ResearchCaseSummary = async () => {
   const recentCases = await prisma.caseFile.findMany({
     where: {
       uploadedBy: {
-        email: session?.user?.email,
+        id: session?.user?.id,
       },
     },
 

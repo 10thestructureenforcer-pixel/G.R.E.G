@@ -14,7 +14,7 @@ const DashboardPromise = async () => {
   const totalCases = await prisma.caseFile.count({
     where: {
       uploadedBy: {
-        email: session?.user?.email,
+        id: session?.user?.id,
       },
     },
   });

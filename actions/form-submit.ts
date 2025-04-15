@@ -49,7 +49,7 @@ export async function formSubmit(formData: any): Promise<Result> {
         dateOfBirth,
         user: {
           connect: {
-            email: session.user.email!,
+            id: session.user.id,
           },
         },
       },

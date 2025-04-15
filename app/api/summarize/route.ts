@@ -1,15 +1,15 @@
-import { auth } from '@/auth';
-import prisma from '@/lib/db';
-import { extractTextFromFile } from '@/lib/text-extract';
-import { NextRequest, NextResponse } from 'next/server';
-import { ChatOpenAI } from '@langchain/openai';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { createStuffDocumentsChain } from 'langchain/chains/combine_documents';
-import { StringOutputParser } from '@langchain/core/output_parsers';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { LangChainAdapter } from 'ai';
-import { getSupabaseUrl } from '@/lib/supabase';
-import { revalidatePath } from 'next/cache';
+import { auth } from "@/auth";
+import prisma from "@/lib/db";
+import { extractTextFromFile } from "@/lib/text-extract";
+import { NextRequest, NextResponse } from "next/server";
+import { ChatOpenAI } from "@langchain/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { LangChainAdapter } from "ai";
+import { getSupabaseUrl } from "@/lib/supabase";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: {
-        email: session?.user?.email as string,
+        id: session?.user?.id,
       },
       include: {
         case_file: true,
@@ -28,39 +28,39 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({
-        error: 'No user found',
+        error: "No user found",
       });
     }
 
     const attachments = body.messages[0].experimental_attachments;
 
     if (!attachments || attachments.length === 0) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     const attachment = attachments[0];
     // console.log("the atatchment is ", attachment);
 
-    if (!attachment.url || !attachment.url.startsWith('data:')) {
+    if (!attachment.url || !attachment.url.startsWith("data:")) {
       return NextResponse.json(
-        { error: 'Invalid file format' },
-        { status: 400 },
+        { error: "Invalid file format" },
+        { status: 400 }
       );
     }
 
-    const base64Data = attachment.url.split(',')[1];
-    const fileBuffer = Buffer.from(base64Data, 'base64');
-    console.log('Filebuffer', fileBuffer);
+    const base64Data = attachment.url.split(",")[1];
+    const fileBuffer = Buffer.from(base64Data, "base64");
+    console.log("Filebuffer", fileBuffer);
     const fileType =
-      attachment.contentType || attachment.url.split(';')[0].split(':')[1];
+      attachment.contentType || attachment.url.split(";")[0].split(":")[1];
 
     const fileName =
-      attachment.name || `file-${Date.now()}.${fileType.split('/')[1]}`;
+      attachment.name || `file-${Date.now()}.${fileType.split("/")[1]}`;
 
     const supabaseUploadUrl = await getSupabaseUrl(
       fileBuffer,
       fileName,
-      fileType,
+      fileType
     );
     // console.log("the supabase url", supabaseUploadUrl.fileUrl);
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    revalidatePath('/research');
+    revalidatePath("/research");
     // redirect("/research");
 
     const textcontent = await extractTextFromFile(fileBuffer, fileType);
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     });
     const splitDocs = await splitter.splitDocuments(textcontent);
 
-    const fileContent = splitDocs.map((doc) => doc.pageContent).join('\n');
+    const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
     console.log(fileContent);
 
     // // Create initial CaseSummary record
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     // });
 
     const llmSummary = new ChatOpenAI({
-      model: 'gpt-4o-mini',
+      model: "gpt-4o-mini",
       temperature: 0.3,
     });
 
@@ -176,10 +176,10 @@ Remember: Focus on accuracy, clarity, and maintaining the document's essential m
     try {
       const stream = await summarizeChain.stream({
         context: splitDocs,
-        existing_answer: '',
+        existing_answer: "",
       });
 
-      console.log('Summarization streaming started');
+      console.log("Summarization streaming started");
 
       return LangChainAdapter.toDataStreamResponse(stream, {
         callbacks: {
@@ -187,36 +187,36 @@ Remember: Focus on accuracy, clarity, and maintaining the document's essential m
             await prisma.caseSummary.create({
               data: {
                 summary: completion,
-                status: 'SUCCESS',
+                status: "SUCCESS",
                 caseFileId: updatedsupabaseUrl.id,
               },
             });
-            console.log('Summary saved successfully');
+            console.log("Summary saved successfully");
           },
         },
       });
     } catch (error) {
-      console.error('Chain error:', error);
+      console.error("Chain error:", error);
       await prisma.caseSummary.update({
         where: {
           caseFileId: updatedsupabaseUrl.id,
         },
         data: {
-          status: 'FAILED',
+          status: "FAILED",
         },
       });
       return NextResponse.json(
         {
-          error: 'Failed to summarize document',
+          error: "Failed to summarize document",
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error("Error processing request:", error);
     return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 },
+      { error: "Failed to process request" },
+      { status: 500 }
     );
   }
 }

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         clientFirstName: opposingParty?.split(" ")[0] || "",
         clientLastName: opposingParty?.split(" ")[1] || "",
         user: {
-          email: session?.user?.email,
+          id: session?.user?.id,
         },
       },
       select: {
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     const identityMatch = await prisma.client.findMany({
       where: {
         user: {
-          email: session?.user?.email,
+          id: session?.user?.id,
         },
         OR: [
           {

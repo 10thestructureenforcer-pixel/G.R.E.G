@@ -29,7 +29,7 @@ export async function saveChat({
         title,
         User: {
           connect: {
-            email: session.user.email,
+            id: session.user.id,
           },
         },
       },
