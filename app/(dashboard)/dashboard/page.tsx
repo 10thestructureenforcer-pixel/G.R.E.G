@@ -17,6 +17,7 @@ const DashboardPromise = async () => {
     include: {
       case_file: true,
       visaComparison: true,
+      challengeWork: true,
     },
   });
   if (!user) {
@@ -31,6 +32,7 @@ const DashboardPromise = async () => {
 
   const totalNumberOfCases = user?.case_file.length;
   const totalNumberOfVisaComparisons = user?.visaComparison.length;
+  const totalNumberOfChallengeWork = user?.challengeWork.length;
 
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
@@ -70,7 +72,7 @@ const DashboardPromise = async () => {
           icon={<Scale3d />}
         />
         <Cards
-          totalCases={totalNumberOfVisaComparisons}
+          totalCases={totalNumberOfChallengeWork}
           title="Governance & Compliance"
           icon={<Workflow />}
         />

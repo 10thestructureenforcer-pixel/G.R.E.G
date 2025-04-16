@@ -1,5 +1,4 @@
 import { modelRule1_6, modelRule1_7 } from "@/lib/law-info";
-import { generateMemoPrompt } from "@/lib/prompt";
 import { openai } from "@ai-sdk/openai";
 import { generateText, streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
@@ -31,6 +30,10 @@ export async function POST(req: NextRequest) {
     - Based on the facts provided
     - Focused on practical solutions
     - Written in a formal legal style`,
+    onFinish: (data) => {
+      // console.log("finished");
+      console.log(data);
+    },
   });
 
   console.log("the text is", stream);

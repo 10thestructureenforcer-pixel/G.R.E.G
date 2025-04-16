@@ -53,12 +53,15 @@ export interface Client {
 export interface Conflict {
   type: string;
   message: string;
-  matches: Array<{
-    clientFirstName: string;
-    clientLastName: string;
-    A_number: string;
-    sponsorCompany: string;
-  }>;
+  matches: Matches[];
+}
+
+export interface Matches {
+  clientName: string;
+  A_number: string;
+  sponsorCompany: string;
+  opposingParty: string;
+  type?: string;
 }
 
 export interface AnalysisData {

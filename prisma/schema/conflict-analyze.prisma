@@ -1,0 +1,15 @@
+model ConflictAnalyze {
+  id String @id @default(uuid())
+  userId String
+  conflictClientName String?
+  conflictSponsorCompanyName String?
+  conflictOpposingParty String?
+  conflictANumber String?
+  conflictType String?
+  downloadedFileUrl String?
+  pdfFileName String?
+  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

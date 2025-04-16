@@ -123,9 +123,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
                             <span className="text-muted-foreground">
                               Client:
                             </span>
-                            <span>
-                              {match.clientFirstName} {match.clientLastName}
-                            </span>
+                            <span>{match.clientName}</span>
                           </div>
                           {match.A_number && (
                             <div className="flex items-center gap-2">

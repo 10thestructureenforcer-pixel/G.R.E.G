@@ -8,7 +8,7 @@ export const generateMemoPrompt = (conflict: Conflict): string => {
   const matchDetails = conflict.matches
     .map(
       (match) =>
-        `Client: ${match.clientFirstName} ${match.clientLastName}${
+        `Client: ${match.clientName}${
           match.A_number ? `, A-Number: ${match.A_number}` : ""
         }${
           match.sponsorCompany
