@@ -18,9 +18,13 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
   isLoadingWork,
   id,
 }) => {
-  const [isRefineWorkLoading, setIsRefineWorkLoading] = useState(false);
+  const [startRefineWork, setStartRefineWork] = useState(false);
 
-  const { completion, complete, isLoading } = useCompletion({
+  const {
+    completion,
+    complete,
+    isLoading: isRefineWorkLoading,
+  } = useCompletion({
     api: "/api/challenge-work/refine-version",
     body: {
       challengeWorkOutput: data,
@@ -37,7 +41,7 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
   }
 
   async function handleRefineResponse() {
-    setIsRefineWorkLoading(true);
+    setStartRefineWork(true);
     await complete("");
   }
 
@@ -62,13 +66,12 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
           </Button>
         </div>
         <div>
-          {isLoadingWork ? (
-            <Loader2 className="w-10 h-10 animate-spin text-green-400 mx-auto" />
-          ) : isRefineWorkLoading ? (
+          {data && !startRefineWork && <ReactMarkdownComponent data={data} />}
+          {startRefineWork && completion ? (
             <ReactMarkdownComponent data={completion} />
-          ) : (
-            <ReactMarkdownComponent data={data} />
-          )}
+          ) : isRefineWorkLoading ? (
+            <Loader2 className="w-10 h-10 animate-spin text-green-400 mx-auto" />
+          ) : null}
         </div>
         <div className="flex justify-end mt-6">
           {/* <Button

@@ -63,7 +63,11 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
     },
   });
 
-  const { completion, isLoading, complete } = useCompletion({
+  const {
+    completion,
+    isLoading: isLoadingCompletion,
+    complete,
+  } = useCompletion({
     api: "/api/challenge-work",
     body: {
       type: selectedResponseType,
@@ -166,9 +170,11 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
                 );
                 await complete("");
               }}
-              disabled={!selectedResponseType || !selectedClient || isLoading}
+              disabled={
+                !selectedResponseType || !selectedClient || isLoadingCompletion
+              }
             >
-              {isLoading ? (
+              {isLoadingCompletion ? (
                 <div className="flex items-center gap-2">
                   {/* <Loader2 className="h-4 w-4 animate-spin" /> */}
                   <span>Generating...</span>
@@ -180,7 +186,21 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
           </div>
         </div>
 
-        {completion && (
+        {challengeWorkIdFromParams && challengeWorkDataFromHistory ? (
+          <div className="mt-6 border-t pt-4">
+            {(() => {
+              const res = challengeWorkDataFromHistory.find(
+                (c) => c.id === challengeWorkIdFromParams
+              );
+              if (!res) return null;
+              return <ReactMarkdownComponent data={res.challengeWorkOutput} />;
+            })()}
+          </div>
+        ) : isLoadingChallengeWorkHistory ? (
+          <div className="flex justify-center items-center h-full my-4">
+            <Loader2 className="h-8 w-8 animate-spin text-green-400" />
+          </div>
+        ) : completion || !challengeWorkIdFromParams ? (
           <div className="mt-6 border-t pt-4">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-semibold">Generated Response</h2>
@@ -188,38 +208,16 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
             <div>
               <GeneratedDraftResponse
                 id={challengeWorkId}
-                isLoadingWork={isLoading}
+                isLoadingWork={isLoadingCompletion}
                 data={completion}
               />
             </div>
           </div>
-        )}
-
-        {isLoadingChallengeWorkHistory ? (
+        ) : isLoadingCompletion ? (
           <div className="flex justify-center items-center h-full my-4">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Loader2 className="h-8 w-8 animate-spin text-green-400" />
           </div>
-        ) : (
-          challengeWorkIdFromParams &&
-          challengeWorkDataFromHistory && (
-            <div className="mt-6 border-t pt-4">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-lg font-semibold">Generated Response</h2>
-              </div>
-
-              {(() => {
-                const res = (
-                  challengeWorkDataFromHistory as RecentChallengeWork[]
-                ).find((c) => c.id === challengeWorkIdFromParams);
-                console.log("Found Item:", res);
-                if (!res) return null;
-                return (
-                  <ReactMarkdownComponent data={res.challengeWorkOutput} />
-                );
-              })()}
-            </div>
-          )
-        )}
+        ) : null}
       </div>
     </div>
   );
