@@ -18,6 +18,7 @@ const DashboardPromise = async () => {
       case_file: true,
       visaComparison: true,
       challengeWork: true,
+      conflictAnalyze: true,
     },
   });
   if (!user) {
@@ -33,6 +34,7 @@ const DashboardPromise = async () => {
   const totalNumberOfCases = user?.case_file.length;
   const totalNumberOfVisaComparisons = user?.visaComparison.length;
   const totalNumberOfChallengeWork = user?.challengeWork.length;
+  const totalNumberOfConflictAnalyze = user?.conflictAnalyze.length;
 
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
@@ -67,7 +69,7 @@ const DashboardPromise = async () => {
           icon={<Plane />}
         />
         <Cards
-          totalCases={totalNumberOfCases}
+          totalCases={totalNumberOfConflictAnalyze}
           title="Ethics usage"
           icon={<Scale3d />}
         />
