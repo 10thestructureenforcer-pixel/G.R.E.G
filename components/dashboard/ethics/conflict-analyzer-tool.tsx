@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import AnalysisResults from "./analysis-results";
 import { ConflictAnalyze } from "@prisma/client";
 import { AnalysisData, Conflict, Matches } from "@/lib/types";
@@ -44,6 +49,7 @@ type ConflictFormValues = z.infer<typeof conflictForm>;
 
 const ConflictAnalyzerTool = () => {
   const [showRecentConflicts, setShowRecentConflicts] = useState(false);
+  const queryClient = useQueryClient();
   const form = useForm<ConflictFormValues>({
     resolver: zodResolver(conflictForm),
     defaultValues: {
@@ -95,6 +101,7 @@ const ConflictAnalyzerTool = () => {
         };
 
         await saveConflictData(conflictData);
+        queryClient.invalidateQueries({ queryKey: ["recent-conflicts"] });
       }
     },
   });
@@ -229,83 +236,80 @@ const ConflictAnalyzerTool = () => {
           </Card>
 
           {/* Recent Conflicts Card */}
-          <Card className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between border-b">
-              <CardTitle className="flex items-center gap-2 text-green-600 mb-2">
-                <History className="h-5 w-5 " />
+          <Card className="w-full max-w-full">
+            <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b px-4 py-3">
+              <CardTitle className="flex items-center gap-2 text-green-600 dark:text-green-400 text-base sm:text-lg">
+                <History className="h-5 w-5" />
                 Recent Conflicts
+                {recentConflicts && recentConflicts.length > 0 && (
+                  <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
+                    {recentConflicts.length}
+                  </span>
+                )}
               </CardTitle>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowRecentConflicts(!showRecentConflicts)}
-                className="flex items-center gap-2 lg:hidden"
+                className="flex items-center gap-2 sm:hidden"
               >
                 <History className="h-4 w-4" />
                 {showRecentConflicts ? "Hide Recent" : "Show Recent"}
               </Button>
             </CardHeader>
-            <CardContent className="">
+
+            <CardContent className="p-4">
               {isLoadingConflicts ? (
                 <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-green-600 " />
+                  <Loader2 className="h-5 w-5 animate-spin text-green-600 dark:text-green-400" />
                 </div>
               ) : recentConflicts && recentConflicts.length > 0 ? (
-                <div>
-                  <div className="flex  justify-end mb-2">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {recentConflicts.length} Conflicts
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="max-h-96 overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="flex flex-col gap-4 w-full">
                     {recentConflicts.map((conflict) => (
                       <div
                         key={conflict.id}
                         onClick={() => handleLoadRecentConflict(conflict)}
                         className={cn(
-                          "p-2 rounded-md cursor-pointer transition-colors border h-16 w-md",
+                          "flex flex-col justify-between p-4 rounded-xl cursor-pointer transition-colors border shadow-sm w-full",
                           conflict.conflictType === "opposingParty"
-                            ? "hover:bg-red-50 dark:hover:bg-red-950/20  border-red-200 dark:border-red-900"
-                            : "hover:bg-yellow-50 dark:hover:bg-yellow-950/20 border-yellow-400 dark:border-yellow-900"
+                            ? "hover:bg-red-100 dark:hover:bg-red-900/30 border-red-300 dark:border-red-800"
+                            : "hover:bg-yellow-100 dark:hover:bg-yellow-900/30 border-yellow-300 dark:border-yellow-800"
                         )}
                       >
-                        <div className="flex items-center justify-between h-full">
-                          <div className="flex items-center gap-1">
-                            {conflict.conflictType === "opposingParty" ? (
-                              <XCircle className="h-4 w-4 text-red-500" />
-                            ) : (
-                              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                        <div className="flex items-center gap-2 mb-2">
+                          {conflict.conflictType === "opposingParty" ? (
+                            <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                          ) : (
+                            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+                          )}
+                          <span
+                            className={cn(
+                              "text-sm font-semibold",
+                              conflict.conflictType === "opposingParty"
+                                ? "text-red-600 dark:text-red-400"
+                                : "text-yellow-600 dark:text-yellow-400"
                             )}
-                            <span
-                              className={cn(
-                                "text-xs font-medium",
-                                conflict.conflictType === "opposingParty"
-                                  ? "text-red-500"
-                                  : "text-yellow-500"
-                              )}
-                            >
-                              {conflict.conflictType === "opposingParty"
-                                ? "Direct Conflict"
-                                : "Potential Conflict"}
-                            </span>
-                          </div>
-                          <p className="text-md font-medium truncate max-w-[120px]">
-                            <span className="flex items-center gap-1">
-                              <User className="h-4 w-4" />
-                              {conflict.conflictClientName}
-                            </span>
-                          </p>
+                          >
+                            {conflict.conflictType === "opposingParty"
+                              ? "Direct Conflict"
+                              : "Potential Conflict"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <User className="h-4 w-4 flex-shrink-0" />
+                          <span className="overflow-ellipsis overflow-hidden">
+                            {conflict.conflictClientName}
+                          </span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-6 text-center">
-                  <History className="h-8 w-8 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    No recent conflicts found
-                  </p>
+                <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground dark:text-gray-400">
+                  <History className="h-8 w-8 mb-3" />
+                  <p className="text-sm">No recent conflicts found</p>
                 </div>
               )}
             </CardContent>
