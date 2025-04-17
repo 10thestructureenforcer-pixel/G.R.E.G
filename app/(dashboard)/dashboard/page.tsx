@@ -5,36 +5,42 @@ import ClientInfoButton from "@/components/dashboard/main-dashboard/client-info-
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import prisma from "@/lib/db";
 import { FileText, Loader2, Plane, Scale3d, Workflow } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
+
+const getCachedData = unstable_cache(
+  async (userId) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        case_file: true,
+        visaComparison: true,
+        challengeWork: true,
+        conflictAnalyze: true,
+      },
+    });
+
+    return user;
+  },
+  ["user-dashboard-data"],
+  { revalidate: 300 }
+);
 
 const DashboardPromise = async () => {
   const session = await auth();
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session?.user?.id,
-    },
-    include: {
-      case_file: true,
-      visaComparison: true,
-      challengeWork: true,
-      conflictAnalyze: true,
-    },
-  });
+  const user = await getCachedData(session?.user?.id);
+
   if (!user) {
-    return (
-      <div>
-        <div>
-          <h1>No user found</h1>
-        </div>
-      </div>
-    );
+    return <div>No user Found</div>;
   }
 
-  const totalNumberOfCases = user?.case_file.length;
-  const totalNumberOfVisaComparisons = user?.visaComparison.length;
-  const totalNumberOfChallengeWork = user?.challengeWork.length;
-  const totalNumberOfConflictAnalyze = user?.conflictAnalyze.length;
+  const totalNumberOfCases = user.case_file.length;
+  const totalNumberOfVisaComparisons = user.visaComparison.length;
+  const totalNumberOfChallengeWork = user.challengeWork.length;
+  const totalNumberOfConflictAnalyze = user.conflictAnalyze.length;
 
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
