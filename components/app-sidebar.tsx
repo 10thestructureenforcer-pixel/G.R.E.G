@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
+import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
 
 // Menu items.
 const items = [
@@ -153,6 +154,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
+      <Link href={"/pricing"}>
+        <div className="p-2 ">
+          <Button className="w-full bg-blue-600 text-white cursor-pointer hover:bg-blue-700 ">
+            View Plans
+          </Button>
+        </div>
+      </Link>
+
       <SidebarFooter className="mt-auto pb-4">
         <SidebarSeparator className="mx-3 bg-border mb-4" />
         <div className="flex flex-col px-3 gap-3">
@@ -175,6 +184,7 @@ export function AppSidebar() {
               <User size={16} />
             </Button>
           </div> */}
+
           <Button
             variant="outline"
             size="sm"

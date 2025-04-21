@@ -63,6 +63,12 @@ model User {
   challengeWork  ChallengeWork[]
   conflictAnalyze ConflictAnalyze[]
 
+
+  stripeCustomerId String? @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId  String?
+  stripeCurrentPeriodEnd DateTime?
+
   @@map("users")
 }
  
