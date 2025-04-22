@@ -101,6 +101,10 @@ export function AppSidebar() {
                 const isActive =
                   pathname === item.url || pathname.startsWith(`${item.url}/`);
 
+                const words = item.title.split(" ");
+                const firstWord = words[0];
+                const restOfTitle = words.slice(1).join(" ");
+
                 return (
                   <SidebarMenuItem
                     className={cn(
@@ -139,8 +143,16 @@ export function AppSidebar() {
                               : "text-muted-foreground"
                           )}
                         >
-                          {item.title}
+                          <div className="flex items-center">
+                            <p className="text-lg mb-0 leading-none font-semibold">
+                              {firstWord.charAt(0).toUpperCase()}
+                            </p>
+                            <span className="flex items-center">
+                              {firstWord.slice(1)}
+                            </span>
+                          </div>
                         </span>
+
                         {isActive && (
                           <div className="ml-auto h-6 w-1 rounded-full bg-green-500 dark:bg-green-400" />
                         )}
@@ -156,11 +168,15 @@ export function AppSidebar() {
 
       <Link href={"/pricing"}>
         <div className="p-2 ">
-          <Button className="w-full bg-blue-600 text-white cursor-pointer hover:bg-blue-700 ">
+          <Button className="w-full bg-blue-700 text-white cursor-pointer hover:bg-blue-700 ">
             View Plans
           </Button>
         </div>
       </Link>
+
+      {/* <div className="m-2 text-center">
+        <CreditsCard />
+      </div> */}
 
       <SidebarFooter className="mt-auto pb-4">
         <SidebarSeparator className="mx-3 bg-border mb-4" />

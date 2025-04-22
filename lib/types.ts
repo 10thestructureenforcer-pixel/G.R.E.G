@@ -1,3 +1,5 @@
+import Stripe from "stripe";
+
 export interface RecentCases {
   id: string;
   title: string;
@@ -99,4 +101,20 @@ export interface RecentChallengeWork {
   refinedOutput: string | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface stripePriceType {
+  id: string;
+  productId: string;
+  unitAmount: number | null;
+  currency: string;
+  interval: Stripe.Price.Recurring.Interval | undefined;
+  trialPeriodDays: number | null | undefined;
+}
+
+export interface stripeProductType {
+  id: string;
+  name: string;
+  description: string | null;
+  defaultPriceId: string | undefined;
 }
