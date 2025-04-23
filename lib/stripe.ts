@@ -43,4 +43,34 @@ export async function getStripeProducts() {
   }));
 }
 
+type PlanDetails = {
+  name: string;
+  maxClientCount: number;
+  caseSummaryCount: number;
+};
+
+export function getPlanDetails(plan_name: string): PlanDetails {
+  if (plan_name === "start") {
+    return {
+      name: "start",
+      maxClientCount: 5,
+      caseSummaryCount: 20,
+    };
+  } else if (plan_name === "grow") {
+    return {
+      name: "grow",
+      maxClientCount: 15,
+      caseSummaryCount: 40,
+    };
+  } else if (plan_name === "scale") {
+    return {
+      name: "scale",
+      maxClientCount: 30,
+      caseSummaryCount: 70,
+    };
+  } else {
+    throw new Error(`Plan ${plan_name} not found`);
+  }
+}
+
 export { stripe };

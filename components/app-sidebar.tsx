@@ -34,7 +34,6 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
-import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
 
 // Menu items.
 const items = [
