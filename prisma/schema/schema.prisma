@@ -69,8 +69,7 @@ model User {
   stripeCurrentPeriodEnd DateTime?
 
   planName String  @default("free")
-  maxClientCount Int   @default(1)
-  caseSummaryCount  Int   @default(0)
+ 
 
   @@map("users")
 }

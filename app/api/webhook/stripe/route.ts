@@ -59,8 +59,6 @@ export async function POST(req: NextRequest) {
       },
       data: {
         planName: planDetails.name,
-        maxClientCount: planDetails.maxClientCount,
-        caseSummaryCount: planDetails.caseSummaryCount,
       },
     });
   }
