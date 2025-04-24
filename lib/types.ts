@@ -118,3 +118,5 @@ export interface stripeProductType {
   description: string | null;
   defaultPriceId: string | undefined;
 }
+
+export type PlanName = "free" | "start" | "grow" | "scale";

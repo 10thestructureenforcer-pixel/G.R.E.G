@@ -9,10 +9,13 @@ import SettingsClient from "@/components/dashboard/settings/settings-client";
 
 function SettingsSkeleton() {
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-8 p-10">
       <div className="grid gap-6 md:grid-cols-2">
         {/* Profile Card Skeleton */}
         <div className="rounded-lg border p-6">
+          <div className="">
+            <h1 className="text-2xl font-bold"></h1>
+          </div>
           <div className="flex items-center justify-between mb-6">
             <Skeleton className="h-6 w-32" />
             <Skeleton className="h-10 w-24" />

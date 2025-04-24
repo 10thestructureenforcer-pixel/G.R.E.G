@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
+import { getUserUsage } from "@/utils/check-add-client-summary";
 
 type Result = {
   status: "success" | "error";
@@ -11,13 +12,25 @@ type Result = {
 export async function formSubmit(formData: any): Promise<Result> {
   try {
     const session = await auth();
+    const userId = session?.user?.id;
 
-    if (!session?.user) {
+    if (!session?.user || !userId) {
       return {
         status: "error",
         message: "Unauthorized User",
       };
     }
+
+    const usage = await getUserUsage(userId);
+
+    if (!usage.canAddClient) {
+      return {
+        status: "error",
+        message:
+          "You have reached the maximum number of clients for this current plan",
+      };
+    }
+
     const {
       clientFirstName,
       clientLastName,
@@ -49,7 +62,7 @@ export async function formSubmit(formData: any): Promise<Result> {
         dateOfBirth,
         user: {
           connect: {
-            id: session.user.id,
+            id: userId,
           },
         },
       },

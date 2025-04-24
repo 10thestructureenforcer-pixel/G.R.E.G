@@ -10,6 +10,8 @@ import AnimatedQuotes from "./animated-quotes";
 import RefinedSummaryButton from "./refined-summary-button";
 import { StoreRefineSummary } from "@/actions/store-refined-summary";
 import { GetRecentCases } from "@/actions/get-recent-cases";
+import { useSession } from "next-auth/react";
+import { getUserUsage } from "@/utils/check-add-client-summary";
 
 interface CaseSummary {
   status: "PENDING" | "SUCCESS" | "FAILED";
@@ -33,6 +35,9 @@ const UploadComponent = () => {
   const [caseId, setCaseId] = useState<string>("");
   const queryClient = useQueryClient();
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   const {
     messages,
     handleSubmit: formSubmit,
@@ -42,6 +47,7 @@ const UploadComponent = () => {
     api: "/api/summarize",
     streamProtocol: "data",
     credentials: "same-origin",
+
     onFinish: async () => {
       queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
         return old.map((case_) => {
@@ -84,8 +90,9 @@ const UploadComponent = () => {
         }
       }
     },
-    onMutate: async () => {
+    onMutate: async (data) => {
       // Create optimistic case
+
       const optimisticCase = {
         id: Date.now().toString(),
         title: file?.[0]?.name || "Untitled Document",
@@ -105,6 +112,7 @@ const UploadComponent = () => {
     },
     onError: (err, newCase, context) => {
       // Update status to FAILED on error
+
       queryClient.setQueryData(["recentCases"], (old: Case[] = []) => {
         return old.map((case_) => {
           if (case_.id === context?.optimisticCase.id) {
@@ -186,6 +194,14 @@ const UploadComponent = () => {
   });
   const handleSubmit = async () => {
     if (!file) return;
+    const user = await getUserUsage(userId!);
+
+    if (!user.canSummarize) {
+      toast.error(
+        "You have reached your  limit of  case summaries. Please upgrade to a paid plan to continue summarizing cases."
+      );
+      return;
+    }
     setSummaryType("original");
     await uploadMutation.mutateAsync();
   };

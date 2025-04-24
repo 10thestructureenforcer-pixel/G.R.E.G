@@ -1,5 +1,6 @@
 import { getStripePrices, getStripeProducts } from "@/lib/stripe";
-import React from "react";
+import React, { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 
 import PricingCards from "@/components/dashboard/pricing/pricing-cards";
 import { stripePriceType, stripeProductType } from "@/lib/types";
@@ -50,4 +51,20 @@ const ViewPlans = async () => {
   );
 };
 
-export default ViewPlans;
+const PricingSuspense = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full h-[50vh] flex items-center justify-center">
+          <div className="flex items-center gap-2 text-green-600">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        </div>
+      }
+    >
+      <ViewPlans />
+    </Suspense>
+  );
+};
+
+export default PricingSuspense;

@@ -10,12 +10,33 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { LangChainAdapter } from "ai";
 import { getSupabaseUrl } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { getUserUsage } from "@/utils/check-add-client-summary";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({
+        message: "Unauthorized",
+        status: "error",
+      });
+    }
+
+    const usage = await getUserUsage(session?.user?.id);
+
+    if (!usage.canSummarize) {
+      return NextResponse.json(
+        {
+          message:
+            "You have reached the maximum number of summaries for this plan",
+          status: "error",
+        },
+        { status: 429 }
+      );
+    }
 
     const user = await prisma.user.findUnique({
       where: {
@@ -29,6 +50,12 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({
         error: "No user found",
+      });
+    }
+
+    if (!usage.canSummarize) {
+      return NextResponse.json({
+        error: "You have reached the maximum number of summaries",
       });
     }
 
@@ -205,52 +232,16 @@ Remember: Focus on accuracy, clarity, and maintaining the document's essential m
           status: "FAILED",
         },
       });
-      return NextResponse.json(
-        {
-          error: "Failed to summarize document",
-        },
-        { status: 500 }
-      );
+      return NextResponse.json({
+        message: "Failed to summarize document",
+        status: "error",
+      });
     }
   } catch (error) {
     console.error("Error processing request:", error);
-    return NextResponse.json(
-      { error: "Failed to process request" },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      message: "Failed to process request",
+      status: "error",
+    });
   }
 }
-
-// export async function GET(request: NextRequest) {
-//   try {
-//     const url = new URL(request.url);
-//     console.log("URL", url);
-
-//     const caseId = url.searchParams.get("casefileId");
-//     console.log("Event ID", caseId);
-
-//     if (!caseId) {
-//       throw new Error("Missing caseId");
-//     }
-
-//     const statusinfo = await prisma.caseSummary.findUnique({
-//       where: {
-//         caseFileId: caseId,
-//       },
-//       select: {
-//         status: true,
-//       },
-//     });
-
-//     return NextResponse.json({
-//       status: 200,
-//       statusinfo,
-//     });
-//   } catch (e) {
-//     console.error("Error processing request:", e);
-//     return NextResponse.json(
-//       { error: "Failed to process request" },
-//       { status: 500 }
-//     );
-//   }
-// }

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -11,7 +11,17 @@ import Link from "next/link";
 const Navbar = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   // const logo =
   //   theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";

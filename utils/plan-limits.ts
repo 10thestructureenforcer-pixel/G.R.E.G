@@ -5,7 +5,7 @@ export const planLimits = {
   },
   start: {
     maxClientCount: 5,
-    maxSummaryCount: 25,
+    maxSummaryCount: 20,
   },
   grow: {
     maxClientCount: 15,

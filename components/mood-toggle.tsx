@@ -1,14 +1,23 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  React.useEffect(() => {}, [theme]);
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   const temp = theme === "dark" ? "light" : "dark";
 
   return (

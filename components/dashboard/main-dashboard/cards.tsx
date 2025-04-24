@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 const Cards = ({
@@ -9,6 +10,14 @@ const Cards = ({
   title: string;
   icon: React.ReactNode;
 }) => {
+  // useEffect(() => {
+  //   const isAlreadyLoggedOut = localStorage.getItem("isAlreadyLoggedOut");
+  //   if (!isAlreadyLoggedOut) {
+  //     localStorage.setItem("isAlreadyLoggedOut", "true");
+  //      toast.loading("Signing Out,Please Sign-In Again");
+  //     signOut({ redirectTo: "/" });
+  //   }
+  // }, []);
   return (
     <div className=" w-full">
       <div className="bg-card rounded-xl shadow-sm p-6 border border-border hover:shadow-md transition-all duration-300">

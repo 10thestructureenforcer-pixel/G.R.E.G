@@ -4,43 +4,74 @@ import Cards from "@/components/dashboard/main-dashboard/cards";
 import ClientInfoButton from "@/components/dashboard/main-dashboard/client-info-button";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import prisma from "@/lib/db";
+import { redis } from "@/lib/redis";
+
 import { FileText, Loader2, Plane, Scale3d, Workflow } from "lucide-react";
-import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
 
-const getCachedData = unstable_cache(
-  async (userId) => {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        case_file: true,
-        visaComparison: true,
-        challengeWork: true,
-        conflictAnalyze: true,
-      },
-    });
-
-    return user;
-  },
-  ["user-dashboard-data"],
-  { revalidate: 300 }
-);
+interface User {
+  id: string;
+  name: string | null;
+  _count: {
+    case_file: number;
+    visaComparison: number;
+    challengeWork: number;
+    conflictAnalyze: number;
+  };
+}
 
 const DashboardPromise = async () => {
   const session = await auth();
 
-  const user = await getCachedData(session?.user?.id);
+  let user: User | null = null;
+  const cachedUser = await redis.get(session?.user?.id as string);
+  // console.log("the cached user is", cachedUser);
+
+  if (cachedUser && typeof cachedUser === "string") {
+    try {
+      user = JSON.parse(cachedUser) as User;
+    } catch (error) {
+      console.error("Error parsing cached user:", error);
+    }
+  }
+
+  if (!user) {
+    const userinfo = await prisma.user.findUnique({
+      where: {
+        id: session?.user?.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            case_file: true,
+            visaComparison: true,
+            challengeWork: true,
+            conflictAnalyze: true,
+          },
+        },
+      },
+    });
+
+    if (!userinfo) {
+      return <div>No user Found</div>;
+    }
+
+    user = userinfo;
+
+    try {
+      await redis.set(session?.user?.id as string, JSON.stringify(user), {
+        ex: 300,
+      });
+    } catch (error) {
+      console.error("Error caching user:", error);
+    }
+  }
 
   if (!user) {
     return <div>No user Found</div>;
   }
-
-  const totalNumberOfCases = user.case_file.length;
-  const totalNumberOfVisaComparisons = user.visaComparison.length;
-  const totalNumberOfChallengeWork = user.challengeWork.length;
-  const totalNumberOfConflictAnalyze = user.conflictAnalyze.length;
 
   return (
     <div className="container mx-auto py-6 md:py-12 px-4 md:px-6 max-w-7xl">
@@ -48,7 +79,7 @@ const DashboardPromise = async () => {
         <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back,{" "}
           <span className="text-green-500 dark:text-green-400">
-            {user?.name ?? "User"}
+            {user.name ?? "User"}
           </span>{" "}
           👋
         </CardTitle>
@@ -65,22 +96,22 @@ const DashboardPromise = async () => {
       {/* <ChatUI /> */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Cards
-          totalCases={totalNumberOfCases}
+          totalCases={user._count.case_file}
           title="Research insights"
           icon={<FileText />}
         />
         <Cards
-          totalCases={totalNumberOfVisaComparisons}
+          totalCases={user._count.visaComparison}
           title="Guidance Overview"
           icon={<Plane />}
         />
         <Cards
-          totalCases={totalNumberOfConflictAnalyze}
+          totalCases={user._count.conflictAnalyze}
           title="Ethics usage"
           icon={<Scale3d />}
         />
         <Cards
-          totalCases={totalNumberOfChallengeWork}
+          totalCases={user._count.challengeWork}
           title="Governance & Compliance"
           icon={<Workflow />}
         />
