@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
     );
 
     const currentPeriodEnd = new Date(subscription.billing_cycle_anchor * 1000);
+    const planDetails = getPlanDetails(
+      subscription.items.data[0].plan.metadata?.plan_name as string
+    );
 
     await prisma.user.update({
       where: {
@@ -38,6 +41,7 @@ export async function POST(req: NextRequest) {
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: currentPeriodEnd,
+        planName: planDetails.name,
       },
     });
   }
@@ -45,20 +49,38 @@ export async function POST(req: NextRequest) {
   if (event.type === "invoice.payment_succeeded") {
     const session = event.data.object as Stripe.Invoice;
 
-    const subscription = await stripe.subscriptions.retrieve(
-      session.parent?.subscription_details?.subscription as string
-    );
+    if (session.billing_reason != "subscription_create") {
+      const subscription = await stripe.subscriptions.retrieve(
+        session.parent?.subscription_details?.subscription as string
+      );
 
-    const planDetails = getPlanDetails(
-      subscription.items.data[0].plan.metadata?.plan_name as string
-    );
+      await prisma.user.update({
+        where: {
+          stripeSubscriptionId: subscription.id,
+        },
+        data: {
+          stripePriceId: subscription.items.data[0].price.id,
+          stripeCurrentPeriodEnd: new Date(
+            subscription.billing_cycle_anchor * 1000
+          ),
+        },
+      });
+    }
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const session = event.data.object as Stripe.Subscription;
 
     await prisma.user.update({
       where: {
-        stripeSubscriptionId: subscription.id,
+        stripeSubscriptionId: session.id,
       },
       data: {
-        planName: planDetails.name,
+        stripeSubscriptionId: null,
+        stripeCustomerId: null,
+        stripePriceId: null,
+        stripeCurrentPeriodEnd: null,
+        planName: "free",
       },
     });
   }

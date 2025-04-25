@@ -6,6 +6,8 @@ import { checkOutAction } from "@/actions/payments/pricing";
 import { Check } from "lucide-react";
 import PricingToggle from "./pricing-toggle";
 import { stripePriceType, stripeProductType } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 
 type SinglePricingCardProps = {
   name: string;
@@ -16,6 +18,11 @@ type SinglePricingCardProps = {
   priceId?: string;
   billingPeriod: string;
   savedAmount?: string;
+  currentPlan?: string;
+};
+
+export type UserPricingData = {
+  planName: "start" | "grow" | "scale";
 };
 
 const formatPrice = (amount: number) => {
@@ -31,7 +38,26 @@ const SinglePricingCard = ({
   priceId,
   billingPeriod,
   savedAmount,
+  currentPlan,
 }: SinglePricingCardProps) => {
+  const { mutate } = useMutation({
+    mutationKey: ["manage-subscription"],
+    mutationFn: async () => {
+      const response = await fetch("/api/manage-subscription", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+      const { url } = await response.json();
+      window.location.href = url;
+    },
+  });
+
+  const handleManageSubscription = async () => {
+    mutate();
+  };
+
+  const isCurrentPlan = currentPlan?.toLowerCase() === name.toLowerCase();
+
   return (
     <div className="rounded-3xl border border-gray-300 dark:border-gray-700 p-6 shadow-md hover:shadow-xl transition-all bg-white dark:bg-black w-full min-h-[350px] flex flex-col justify-between">
       <div>
@@ -67,10 +93,19 @@ const SinglePricingCard = ({
       </div>
 
       <div className="mt-4">
-        <form action={checkOutAction}>
-          <input type="hidden" name="priceId" value={priceId} />
-          <PricingSubmitButton name={name} />
-        </form>
+        {isCurrentPlan ? (
+          <Button
+            className="w-full py-2 text-md cursor-pointer dark:bg-gray-200 dark:text-black rounded-full    dark:hover:bg-gray-300"
+            onClick={handleManageSubscription}
+          >
+            Manage Subscription
+          </Button>
+        ) : (
+          <form action={checkOutAction}>
+            <input type="hidden" name="priceId" value={priceId} />
+            <PricingSubmitButton name={name} />
+          </form>
+        )}
       </div>
     </div>
   );
@@ -83,6 +118,7 @@ const PricingCards = ({
   startPrice,
   growPrice,
   scalePrice,
+  userPricingData,
 }: {
   startProduct: stripeProductType;
   growProduct: stripeProductType;
@@ -90,6 +126,7 @@ const PricingCards = ({
   startPrice: stripePriceType[];
   growPrice: stripePriceType[];
   scalePrice: stripePriceType[];
+  userPricingData: UserPricingData;
 }) => {
   const [isYearly, setIsYearly] = useState(false);
 
@@ -117,6 +154,23 @@ const PricingCards = ({
     (price: stripePriceType) => price.interval === "month"
   );
 
+  const { mutate } = useMutation({
+    mutationKey: ["manage-subscription"],
+    mutationFn: async () => {
+      const response = await fetch("/api/manage-subscription", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+
+      const { url } = await response.json();
+      window.location.href = url;
+    },
+  });
+
+  const handleManageSubscription = async () => {
+    mutate();
+  };
+
   return (
     <div className="flex flex-col items-center max-w-7xl mx-auto px-2 py-3">
       <PricingToggle
@@ -139,7 +193,8 @@ const PricingCards = ({
               "Auto-draft petitions, waivers, declarations",
               "AI help with RFEs and motions",
               "Smart legal strategy suggestions",
-              //   "Case-by-case document workspace",
+              "Case-by-case document workspace",
+              "Upto 5 clients and 20 case summaries",
             ]}
             priceId={
               isYearly
@@ -148,6 +203,7 @@ const PricingCards = ({
             }
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $238" : ""}
+            currentPlan={userPricingData.planName}
           />
         </div>
 
@@ -165,12 +221,14 @@ const PricingCards = ({
               "Everything in Start",
               "Priority access to new tools",
               "Extra templates & document storage",
+              "Upto 15 clients and 50 case summaries",
             ]}
             priceId={
               isYearly ? yearlyGrowPrice?.id || "" : monthlyGrowPrice?.id || ""
             }
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $488" : ""}
+            currentPlan={userPricingData.planName}
           />
         </div>
 
@@ -188,6 +246,7 @@ const PricingCards = ({
               "Best for high-volume solos",
               "Faster workflows, more case slots",
               "Add more clients anytime—just $10/client/month",
+              "Upto 30 clients and 100 case summaries",
             ]}
             priceId={
               isYearly
@@ -196,6 +255,7 @@ const PricingCards = ({
             }
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $713" : ""}
+            currentPlan={userPricingData.planName}
           />
         </div>
       </div>

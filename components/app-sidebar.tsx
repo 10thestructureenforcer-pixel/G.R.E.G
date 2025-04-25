@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
+import PlanCard from "./plan-card";
 
 // Menu items.
 const items = [
@@ -167,9 +168,7 @@ export function AppSidebar() {
 
       <Link href={"/pricing"}>
         <div className="p-2 ">
-          <Button className="w-full bg-blue-700 text-white cursor-pointer hover:bg-blue-700 ">
-            View Plans
-          </Button>
+          <PlanCard />
         </div>
       </Link>
 

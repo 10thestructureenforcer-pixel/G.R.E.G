@@ -87,6 +87,7 @@ export interface SettingsUser {
   email: string | null;
   image: string | null;
   isPro: boolean;
+  planName: "free" | "start" | "grow" | "scale";
   client: Client[];
 }
 

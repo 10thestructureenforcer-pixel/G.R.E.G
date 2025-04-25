@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import CustomTrigger from "@/components/dashboard/custom-trigger";
 import { ModeToggle } from "@/components/mood-toggle";
+import ProAccountButton from "@/components/pro-account-button";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function Layout({
@@ -36,6 +37,7 @@ export default async function Layout({
             <div className="sm:ml-auto  ml-auto -mx-2">
               <ModeToggle />
             </div>
+            <ProAccountButton />
           </div>
         </header>
         <div className="bg-gradient-to-b from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent h-2" />

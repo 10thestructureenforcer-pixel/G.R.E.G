@@ -5,12 +5,16 @@ import { Loader2 } from "lucide-react";
 import PricingCards from "@/components/dashboard/pricing/pricing-cards";
 import { stripePriceType, stripeProductType } from "@/lib/types";
 
+import { UserPricingData } from "@/components/dashboard/pricing/pricing-cards";
+import { getUserPricingData } from "@/actions/payments/get-user-pricing-data";
+
 // export const revalidate = 100;
 
 const ViewPlans = async () => {
-  const [prices, products] = await Promise.all([
+  const [prices, products, userPricingData] = await Promise.all([
     getStripePrices(),
     getStripeProducts(),
+    getUserPricingData(),
   ]);
 
   const startProduct = products.find(
@@ -46,6 +50,9 @@ const ViewPlans = async () => {
         startPrice={startPrice}
         growPrice={growPrice}
         scalePrice={scalePrice}
+        userPricingData={
+          (userPricingData || { planName: "free" }) as UserPricingData
+        }
       />
     </div>
   );

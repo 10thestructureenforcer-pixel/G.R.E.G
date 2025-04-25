@@ -146,15 +146,63 @@ export default function SettingsClient({
                     <div className="p-2 rounded-full bg-primary/10">
                       <Shield className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">Account Type</h4>
-                      <Badge
-                        className={`${
-                          user.isPro ? "bg-green-500" : "bg-yellow-500"
-                        } text-xs`}
-                      >
-                        {user.isPro ? "Pro Account" : "Free Account"}
-                      </Badge>
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-semibold">Current Plan</h4>
+                        <Badge
+                          className={`${
+                            user.planName === "free"
+                              ? "bg-gray-500"
+                              : user.planName === "start"
+                              ? "bg-blue-500"
+                              : user.planName === "grow"
+                              ? "bg-green-500"
+                              : "bg-purple-500"
+                          } text-xs capitalize`}
+                        >
+                          {user.planName}
+                        </Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          {user.planName === "free" &&
+                            "Basic features with limited access"}
+                          {user.planName === "start" &&
+                            "Perfect for small practices"}
+                          {user.planName === "grow" &&
+                            "Ideal for growing practices"}
+                          {user.planName === "scale" &&
+                            "Enterprise-level features"}
+                        </p>
+                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            <span>
+                              {user.planName === "free"
+                                ? "1"
+                                : user.planName === "start"
+                                ? "5"
+                                : user.planName === "grow"
+                                ? "15"
+                                : "30"}{" "}
+                              Clients Allowed
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Shield className="w-3 h-3" />
+                            <span>
+                              {user.planName === "free"
+                                ? "5"
+                                : user.planName === "start"
+                                ? "20"
+                                : user.planName === "grow"
+                                ? "50"
+                                : "100"}{" "}
+                              case summaries
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 

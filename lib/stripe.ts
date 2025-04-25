@@ -1,4 +1,6 @@
+import { auth } from "@/auth";
 import Stripe from "stripe";
+import prisma from "./db";
 
 const stripe = new Stripe(
   (process.env.STRIPE_SECRET_KEY as string) || "api_key_placeholder",

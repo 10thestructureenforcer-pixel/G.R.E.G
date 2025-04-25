@@ -94,6 +94,7 @@ async function SettingsPage() {
       image: user.image,
       isPro: user.isPro,
       client: user.client,
+      planName: user.planName as "free" | "start" | "grow" | "scale",
     };
 
     return (
