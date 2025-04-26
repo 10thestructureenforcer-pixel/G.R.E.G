@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import LinkedIn from "next-auth/providers/linkedin";
 
 const authPages = ["/sign-up", "/sign-in"];
-const publicRoutes = ["/", "/api/webhook"];
+const publicRoutes = ["/", "/api/webhook/stripe"];
 
 const protectedRoutes = [
   "/dashboard",
