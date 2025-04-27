@@ -59,12 +59,12 @@ const SinglePricingCard = ({
     mutate();
   };
 
-  console.log(currentPlan, name, billingPeriod);
+  // console.log(currentPlan, name, billingPeriod);
   const isCurrentPlan =
     currentPlan?.toLowerCase() === name.toLowerCase() &&
     userPricingData?.billingPeriod === billingPeriod;
 
-  console.log(isCurrentPlan);
+  // console.log(isCurrentPlan);
 
   return (
     <div className="rounded-3xl border border-gray-300 dark:border-gray-700 p-6 shadow-md hover:shadow-xl transition-all bg-white dark:bg-black w-full min-h-[350px] flex flex-col justify-between">

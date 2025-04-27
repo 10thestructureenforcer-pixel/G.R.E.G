@@ -12,7 +12,7 @@ export async function checkOutAction(formData: FormData) {
   try {
     const priceId = formData.get("priceId");
     const billingPeriod = formData.get("billingPeriod");
-    console.log(priceId, billingPeriod);
+    // console.log(priceId, billingPeriod);
 
     if (!priceId) {
       throw new Error("No price id");
