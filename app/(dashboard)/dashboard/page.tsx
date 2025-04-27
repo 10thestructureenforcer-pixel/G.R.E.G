@@ -18,6 +18,7 @@ interface User {
     challengeWork: number;
     conflictAnalyze: number;
   };
+  isPro: boolean;
 }
 
 const DashboardPromise = async () => {
@@ -51,6 +52,7 @@ const DashboardPromise = async () => {
             conflictAnalyze: true,
           },
         },
+        isPro: true,
       },
     });
 
@@ -78,14 +80,26 @@ const DashboardPromise = async () => {
       <div className="mb-8 md:mb-12">
         <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back,{" "}
-          <span className="text-green-500 dark:text-green-400">
+          <span
+            className={
+              user.isPro
+                ? "text-cyan-500 dark:text-cyan-400"
+                : "text-green-500 dark:text-green-400"
+            }
+          >
             {user.name ?? "User"}
           </span>{" "}
           👋
         </CardTitle>
         <CardDescription className="text-base md:text-lg">
           Ask me anything about{" "}
-          <span className="text-green-500 dark:text-green-400">
+          <span
+            className={
+              user.isPro
+                ? "text-cyan-500 dark:text-cyan-400"
+                : "text-green-500 dark:text-green-400"
+            }
+          >
             legal cases
           </span>{" "}
           and I&apos;ll help you find the information you need.
@@ -98,22 +112,42 @@ const DashboardPromise = async () => {
         <Cards
           totalCases={user._count.case_file}
           title="Research insights"
-          icon={<FileText />}
+          icon={
+            <FileText
+              className={user.isPro ? "text-cyan-500" : "text-green-500"}
+            />
+          }
+          isPro={user.isPro}
         />
         <Cards
           totalCases={user._count.visaComparison}
           title="Guidance Overview"
-          icon={<Plane />}
+          icon={
+            <Plane
+              className={user.isPro ? "text-cyan-500" : "text-green-500"}
+            />
+          }
+          isPro={user.isPro}
         />
         <Cards
           totalCases={user._count.conflictAnalyze}
           title="Ethics usage"
-          icon={<Scale3d />}
+          icon={
+            <Scale3d
+              className={user.isPro ? "text-cyan-500" : "text-green-500"}
+            />
+          }
+          isPro={user.isPro}
         />
         <Cards
           totalCases={user._count.challengeWork}
           title="Governance & Compliance"
-          icon={<Workflow />}
+          icon={
+            <Workflow
+              className={user.isPro ? "text-cyan-500" : "text-green-500"}
+            />
+          }
+          isPro={user.isPro}
         />
       </div>
     </div>

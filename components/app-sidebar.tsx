@@ -35,6 +35,9 @@ import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
 import PlanCard from "./plan-card";
+import { useState, useEffect } from "react";
+import ProAccountButton from "./pro-account-button";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Menu items.
 const items = [
@@ -73,8 +76,13 @@ const items = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const darkLogo = "/logos/logo_dark_mode.png";
   const lightLogo = "/logos/greg_final.png";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <Sidebar
@@ -82,9 +90,11 @@ export function AppSidebar() {
       className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <SidebarHeader className="overflow-hidden">
-        <div className="flex items-center p-2">
+        <div className="flex items-center justify-between p-4">
           <div className="relative overflow-hidden group cursor-pointer w-[70px] h-[70px] bg-background rounded-lg">
-            {theme === "dark" ? (
+            {!mounted ? (
+              <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-950 rounded-lg" />
+            ) : theme === "dark" ? (
               <Image src={darkLogo} alt="logo" width={70} height={70} />
             ) : (
               <Image src={lightLogo} alt="logo" width={70} height={70} />

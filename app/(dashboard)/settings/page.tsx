@@ -95,6 +95,7 @@ async function SettingsPage() {
       isPro: user.isPro,
       client: user.client,
       planName: user.planName as "free" | "start" | "grow" | "scale",
+      billingPeriod: user.billingPeriod || "",
     };
 
     return (

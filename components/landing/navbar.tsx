@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { ModeToggle } from "../mood-toggle";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -18,10 +19,6 @@ const Navbar = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   // const logo =
   //   theme === "dark" ? "/logos/logo_dark_mode.png" : "/logos/greg_final.png";
@@ -39,19 +36,33 @@ const Navbar = () => {
   const isDashboardRoute = pathname.startsWith("/dashboard");
 
   return (
-    <div className="w-full border-2 border-b-neutral-400/40 dark:border-b-white/10">
+    <div className="w-full border-b border-gray-200/50 dark:border-gray-800/50">
       <nav className="w-full">
         <div className="flex items-center justify-between w-full container mx-auto p-2">
           {/* Logo section - left side */}
           {!isDashboardRoute && (
-            <div className="relative overflow-hidden group cursor-pointer w-[50px] h-[50px] md:w-[75px] bg-background  md:h-[70px] rounded-md  ">
-              {theme === "dark" ? (
+            <div className="relative overflow-hidden group cursor-pointer w-[40px] h-[40px] md:w-[60px] md:h-[60px] bg-background rounded-md">
+              {!mounted ? (
+                <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-950 rounded-md" />
+              ) : theme === "dark" ? (
                 <>
-                  <Image src={darkLogo} alt="logo" width={90} height={90} />
+                  <Image
+                    src={darkLogo}
+                    alt="logo"
+                    width={60}
+                    height={60}
+                    className="object-contain w-full h-full"
+                  />
                 </>
               ) : (
                 <>
-                  <Image src={lightLogo} alt="logo" width={90} height={90} />
+                  <Image
+                    src={lightLogo}
+                    alt="logo"
+                    width={60}
+                    height={60}
+                    className="object-contain w-full h-full"
+                  />
                 </>
               )}
             </div>

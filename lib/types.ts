@@ -88,6 +88,7 @@ export interface SettingsUser {
   image: string | null;
   isPro: boolean;
   planName: "free" | "start" | "grow" | "scale";
+  billingPeriod?: string;
   client: Client[];
 }
 

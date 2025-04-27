@@ -40,7 +40,9 @@ export default async function Layout({
             <ProAccountButton />
           </div>
         </header>
+
         <div className="bg-gradient-to-b from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent h-2" />
+
         {children}
       </main>
     </SidebarProvider>

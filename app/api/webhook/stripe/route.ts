@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
         id: metadata.userId,
       },
       data: {
+        isPro: true,
         billingPeriod: metadata.billingPeriod,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
           stripeSubscriptionId: subscription.id,
         },
         data: {
+          isPro: true,
           billingPeriod: subscription.items.data[0].plan.metadata
             ?.billing_period as string,
           stripePriceId: subscription.items.data[0].price.id,
@@ -87,6 +89,7 @@ export async function POST(req: NextRequest) {
         stripeCurrentPeriodEnd: null,
         billingPeriod: null,
         planName: "free",
+        isPro: false,
       },
     });
   }

@@ -43,7 +43,7 @@ const SinglePricingCard = ({
   currentPlan,
   userPricingData,
 }: SinglePricingCardProps) => {
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["manage-subscription"],
     mutationFn: async () => {
       const response = await fetch("/api/manage-subscription", {
@@ -106,7 +106,7 @@ const SinglePricingCard = ({
             className="w-full py-2 text-md cursor-pointer dark:bg-gray-200 dark:text-black rounded-full    dark:hover:bg-gray-300"
             onClick={handleManageSubscription}
           >
-            Manage Subscription
+            {isPending ? "Managing..." : "Manage Subscription"}
           </Button>
         ) : (
           <form action={checkOutAction}>

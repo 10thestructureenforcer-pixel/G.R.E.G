@@ -70,11 +70,16 @@ const page = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden min-h-[80vh]">
+        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg  bg-background">
           <DotPattern
             glow={true}
+            width={20}
+            height={20}
+            cx={1}
+            cy={1}
+            cr={1}
             className={cn(
-              "absolute inset-0 [mask-image:radial-gradient(transparent)]"
+              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]"
             )}
           />
           <Hero />

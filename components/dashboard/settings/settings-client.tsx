@@ -149,19 +149,27 @@ export default function SettingsClient({
                     <div className="flex-1 space-y-3">
                       <div className="flex items-center justify-between">
                         <h4 className="text-sm font-semibold">Current Plan</h4>
-                        <Badge
-                          className={`${
-                            user.planName === "free"
-                              ? "bg-gray-500"
-                              : user.planName === "start"
-                              ? "bg-blue-500"
-                              : user.planName === "grow"
-                              ? "bg-green-500"
-                              : "bg-purple-500"
-                          } text-xs capitalize`}
-                        >
-                          {user.planName}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            className={`${
+                              user.planName === "free"
+                                ? "bg-gray-500"
+                                : user.planName === "start"
+                                ? "bg-blue-500"
+                                : user.planName === "grow"
+                                ? "bg-green-500"
+                                : "bg-purple-500"
+                            } text-xs capitalize`}
+                          >
+                            {user.planName}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="text-xs capitalize"
+                          >
+                            {user.billingPeriod}
+                          </Badge>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <p className="text-sm text-muted-foreground">
@@ -175,7 +183,7 @@ export default function SettingsClient({
                             "Enterprise-level features"}
                         </p>
                         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/5">
                             <Users className="w-3 h-3" />
                             <span>
                               {user.planName === "free"
@@ -185,10 +193,10 @@ export default function SettingsClient({
                                 : user.planName === "grow"
                                 ? "15"
                                 : "30"}{" "}
-                              Clients Allowed
+                              Clients
                             </span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/5">
                             <Shield className="w-3 h-3" />
                             <span>
                               {user.planName === "free"
@@ -198,7 +206,7 @@ export default function SettingsClient({
                                 : user.planName === "grow"
                                 ? "50"
                                 : "100"}{" "}
-                              case summaries
+                              Cases
                             </span>
                           </div>
                         </div>
