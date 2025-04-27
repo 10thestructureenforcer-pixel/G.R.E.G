@@ -13,6 +13,7 @@ export async function getUserPricingData() {
     },
     select: {
       planName: true,
+      billingPeriod: true,
     },
   });
   return user;

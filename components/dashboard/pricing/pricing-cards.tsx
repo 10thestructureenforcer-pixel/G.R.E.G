@@ -19,10 +19,12 @@ type SinglePricingCardProps = {
   billingPeriod: string;
   savedAmount?: string;
   currentPlan?: string;
+  userPricingData: UserPricingData;
 };
 
 export type UserPricingData = {
   planName: "start" | "grow" | "scale";
+  billingPeriod: "month" | "year";
 };
 
 const formatPrice = (amount: number) => {
@@ -39,6 +41,7 @@ const SinglePricingCard = ({
   billingPeriod,
   savedAmount,
   currentPlan,
+  userPricingData,
 }: SinglePricingCardProps) => {
   const { mutate } = useMutation({
     mutationKey: ["manage-subscription"],
@@ -56,7 +59,12 @@ const SinglePricingCard = ({
     mutate();
   };
 
-  const isCurrentPlan = currentPlan?.toLowerCase() === name.toLowerCase();
+  console.log(currentPlan, name, billingPeriod);
+  const isCurrentPlan =
+    currentPlan?.toLowerCase() === name.toLowerCase() &&
+    userPricingData?.billingPeriod === billingPeriod;
+
+  console.log(isCurrentPlan);
 
   return (
     <div className="rounded-3xl border border-gray-300 dark:border-gray-700 p-6 shadow-md hover:shadow-xl transition-all bg-white dark:bg-black w-full min-h-[350px] flex flex-col justify-between">
@@ -103,6 +111,7 @@ const SinglePricingCard = ({
         ) : (
           <form action={checkOutAction}>
             <input type="hidden" name="priceId" value={priceId} />
+            <input type="hidden" name="billingPeriod" value={billingPeriod} />
             <PricingSubmitButton name={name} />
           </form>
         )}
@@ -181,7 +190,7 @@ const PricingCards = ({
       <div className="flex flex-col md:flex-row justify-center gap-6 mt-4">
         <div className="w-full max-w-sm mx-auto">
           <SinglePricingCard
-            name={startProduct?.name || "Start"}
+            name={startProduct.name.toLowerCase() || "start"}
             price={
               isYearly
                 ? yearlyStartPrice?.unitAmount || 0
@@ -204,12 +213,13 @@ const PricingCards = ({
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $238" : ""}
             currentPlan={userPricingData.planName}
+            userPricingData={userPricingData}
           />
         </div>
 
         <div className="w-full max-w-sm mx-auto">
           <SinglePricingCard
-            name={growProduct?.name || "Grow"}
+            name={growProduct.name.toLowerCase() || "grow"}
             price={
               isYearly
                 ? yearlyGrowPrice?.unitAmount || 0
@@ -229,12 +239,13 @@ const PricingCards = ({
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $488" : ""}
             currentPlan={userPricingData.planName}
+            userPricingData={userPricingData}
           />
         </div>
 
         <div className="w-full max-w-sm mx-auto">
           <SinglePricingCard
-            name={scaleProduct?.name || "Scale"}
+            name={scaleProduct.name.toLowerCase() || "scale"}
             price={
               isYearly
                 ? yearlyScalePrice?.unitAmount || 0
@@ -256,6 +267,7 @@ const PricingCards = ({
             billingPeriod={isYearly ? "year" : "month"}
             savedAmount={isYearly ? "Save $713" : ""}
             currentPlan={userPricingData.planName}
+            userPricingData={userPricingData}
           />
         </div>
       </div>

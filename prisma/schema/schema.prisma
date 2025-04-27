@@ -67,6 +67,7 @@ model User {
   stripeSubscriptionId String? @unique
   stripePriceId  String?
   stripeCurrentPeriodEnd DateTime?
+  billingPeriod String?
 
   planName String  @default("free")
  

@@ -32,11 +32,14 @@ export async function POST(req: NextRequest) {
       subscription.items.data[0].plan.metadata?.plan_name as string
     );
 
+    // console.log("billingPeriod is", metadata.billingPeriod);
+
     await prisma.user.update({
       where: {
         id: metadata.userId,
       },
       data: {
+        billingPeriod: metadata.billingPeriod,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
@@ -59,6 +62,8 @@ export async function POST(req: NextRequest) {
           stripeSubscriptionId: subscription.id,
         },
         data: {
+          billingPeriod: subscription.items.data[0].plan.metadata
+            ?.billing_period as string,
           stripePriceId: subscription.items.data[0].price.id,
           stripeCurrentPeriodEnd: new Date(
             subscription.billing_cycle_anchor * 1000
@@ -80,6 +85,7 @@ export async function POST(req: NextRequest) {
         stripeCustomerId: null,
         stripePriceId: null,
         stripeCurrentPeriodEnd: null,
+        billingPeriod: null,
         planName: "free",
       },
     });

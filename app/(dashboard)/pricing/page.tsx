@@ -50,9 +50,7 @@ const ViewPlans = async () => {
         startPrice={startPrice}
         growPrice={growPrice}
         scalePrice={scalePrice}
-        userPricingData={
-          (userPricingData || { planName: "free" }) as UserPricingData
-        }
+        userPricingData={userPricingData as UserPricingData}
       />
     </div>
   );
