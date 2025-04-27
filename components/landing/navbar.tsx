@@ -41,7 +41,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-full container mx-auto p-2">
           {/* Logo section - left side */}
           {!isDashboardRoute && (
-            <div className="relative overflow-hidden group cursor-pointer w-[40px] h-[40px] md:w-[60px] md:h-[60px] bg-background rounded-md">
+            <div className="relative overflow-hidden group cursor-pointer w-[50px] h-[50px] md:w-[60px] md:h-[60px] bg-background rounded-md">
               {!mounted ? (
                 <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-950 rounded-md" />
               ) : theme === "dark" ? (

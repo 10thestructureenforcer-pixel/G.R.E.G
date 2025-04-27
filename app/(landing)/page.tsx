@@ -1,6 +1,9 @@
 import Hero from "@/components/landing/hero";
 import Navbar from "@/components/landing/navbar";
 import Footer from "@/components/landing/footer";
+import Testimonials from "@/components/landing/testimonials";
+import Statistics from "@/components/landing/statistics";
+import CTA from "@/components/landing/cta";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { cn } from "@/lib/utils";
@@ -70,7 +73,7 @@ const page = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg  bg-background">
+        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background">
           <DotPattern
             glow={true}
             width={20}
@@ -87,7 +90,7 @@ const page = () => {
         <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 ">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
                 Immigration Law Solutions
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -103,6 +106,9 @@ const page = () => {
             </BentoGrid>
           </div>
         </div>
+        {/* <Statistics /> */}
+        {/* <Testimonials />
+        <CTA /> */}
       </main>
       <div className="my-2">
         <Footer />
