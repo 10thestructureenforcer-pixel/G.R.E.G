@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       },
       select: {
         stripeCustomerId: true,
+        stripeSubscriptionId: true,
       },
     });
 

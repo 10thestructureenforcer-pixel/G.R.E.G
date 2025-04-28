@@ -13,6 +13,8 @@ export const getUserUsage = async (userId: string) => {
       select: {
         id: true,
         planName: true,
+        isSubscribed: true,
+        stripeCurrentPeriodEnd: true,
         _count: {
           select: {
             client: true,
@@ -26,7 +28,12 @@ export const getUserUsage = async (userId: string) => {
   ]);
 
   if (!user) throw new Error("User not found");
-  const plan = (user.planName ?? "free") as PlanName;
+
+  const now = new Date();
+  const isProUser =
+    user.isSubscribed ||
+    (user.stripeCurrentPeriodEnd && user.stripeCurrentPeriodEnd > now);
+  const plan = (isProUser ? user.planName ?? "free" : "free") as PlanName;
 
   const limits = planLimits[plan];
 

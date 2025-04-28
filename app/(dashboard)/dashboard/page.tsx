@@ -18,7 +18,6 @@ interface User {
     challengeWork: number;
     conflictAnalyze: number;
   };
-  isPro: boolean;
 }
 
 const DashboardPromise = async () => {
@@ -26,7 +25,6 @@ const DashboardPromise = async () => {
 
   let user: User | null = null;
   const cachedUser = await redis.get(session?.user?.id as string);
-  // console.log("the cached user is", cachedUser);
 
   if (cachedUser && typeof cachedUser === "string") {
     try {
@@ -52,7 +50,6 @@ const DashboardPromise = async () => {
             conflictAnalyze: true,
           },
         },
-        isPro: true,
       },
     });
 
@@ -80,26 +77,14 @@ const DashboardPromise = async () => {
       <div className="mb-8 md:mb-12">
         <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back,{" "}
-          <span
-            className={
-              user.isPro
-                ? "text-cyan-500 dark:text-cyan-400"
-                : "text-green-500 dark:text-green-400"
-            }
-          >
+          <span className="text-neutral-700 dark:text-neutral-300">
             {user.name ?? "User"}
           </span>{" "}
           👋
         </CardTitle>
         <CardDescription className="text-base md:text-lg">
           Ask me anything about{" "}
-          <span
-            className={
-              user.isPro
-                ? "text-cyan-500 dark:text-cyan-400"
-                : "text-green-500 dark:text-green-400"
-            }
-          >
+          <span className="text-neutral-700 dark:text-neutral-300">
             legal cases
           </span>{" "}
           and I&apos;ll help you find the information you need.
@@ -112,42 +97,22 @@ const DashboardPromise = async () => {
         <Cards
           totalCases={user._count.case_file}
           title="Research insights"
-          icon={
-            <FileText
-              className={user.isPro ? "text-cyan-500" : "text-green-500"}
-            />
-          }
-          isPro={user.isPro}
+          icon={<FileText className="text-neutral-700 dark:text-neutral-300" />}
         />
         <Cards
           totalCases={user._count.visaComparison}
           title="Guidance Overview"
-          icon={
-            <Plane
-              className={user.isPro ? "text-cyan-500" : "text-green-500"}
-            />
-          }
-          isPro={user.isPro}
+          icon={<Plane className="text-neutral-700 dark:text-neutral-300" />}
         />
         <Cards
           totalCases={user._count.conflictAnalyze}
           title="Ethics usage"
-          icon={
-            <Scale3d
-              className={user.isPro ? "text-cyan-500" : "text-green-500"}
-            />
-          }
-          isPro={user.isPro}
+          icon={<Scale3d className="text-neutral-700 dark:text-neutral-300" />}
         />
         <Cards
           totalCases={user._count.challengeWork}
           title="Governance & Compliance"
-          icon={
-            <Workflow
-              className={user.isPro ? "text-cyan-500" : "text-green-500"}
-            />
-          }
-          isPro={user.isPro}
+          icon={<Workflow className="text-neutral-700 dark:text-neutral-300" />}
         />
       </div>
     </div>
@@ -159,7 +124,7 @@ const DashboardSuspense = () => {
     <Suspense
       fallback={
         <div className="w-full h-[50vh] flex items-center justify-center">
-          <div className="flex items-center gap-2 text-green-600">
+          <div className="flex items-center gap-2 text-neutral-700 dark:text-neutral-300">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
         </div>

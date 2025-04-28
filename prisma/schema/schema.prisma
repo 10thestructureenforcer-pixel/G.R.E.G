@@ -63,11 +63,12 @@ model User {
   challengeWork  ChallengeWork[]
   conflictAnalyze ConflictAnalyze[]
 
-  stripeCustomerId String? @unique
-  stripeSubscriptionId String? @unique
+  stripeCustomerId String? 
+  stripeSubscriptionId String?
   stripePriceId  String?
   stripeCurrentPeriodEnd DateTime?
   billingPeriod String?
+  isSubscribed Boolean @default(false)
 
   planName String  @default("free")
  

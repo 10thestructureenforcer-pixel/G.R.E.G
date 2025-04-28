@@ -5,10 +5,9 @@ interface CardsProps {
   totalCases: number;
   title: string;
   icon: React.ReactNode;
-  isPro?: boolean;
 }
 
-const Cards = ({ totalCases, title, icon, isPro }: CardsProps) => {
+const Cards = ({ totalCases, title, icon }: CardsProps) => {
   // useEffect(() => {
   //   const isAlreadyLoggedOut = localStorage.getItem("isAlreadyLoggedOut");
   //   if (!isAlreadyLoggedOut) {
@@ -24,13 +23,7 @@ const Cards = ({ totalCases, title, icon, isPro }: CardsProps) => {
           <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-2xl font-bold mt-2">{totalCases}</p>
         </div>
-        <div
-          className={`p-3 rounded-full ${
-            isPro
-              ? "bg-cyan-100 dark:bg-cyan-900/30"
-              : "bg-green-100 dark:bg-green-900/30"
-          }`}
-        >
+        <div className="p-3 rounded-full bg-neutral-100 dark:bg-neutral-800">
           {icon}
         </div>
       </div>

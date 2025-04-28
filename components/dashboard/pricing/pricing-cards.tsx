@@ -43,7 +43,7 @@ const SinglePricingCard = ({
   currentPlan,
   userPricingData,
 }: SinglePricingCardProps) => {
-  const { mutate, isPending } = useMutation({
+  const { mutate, status } = useMutation({
     mutationKey: ["manage-subscription"],
     mutationFn: async () => {
       const response = await fetch("/api/manage-subscription", {
@@ -67,22 +67,22 @@ const SinglePricingCard = ({
   // console.log(isCurrentPlan);
 
   return (
-    <div className="rounded-3xl border border-gray-300 dark:border-gray-700 p-6 shadow-md hover:shadow-xl transition-all bg-white dark:bg-black w-full min-h-[350px] flex flex-col justify-between">
+    <div className="rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm hover:shadow-md transition-all bg-white dark:bg-neutral-900 w-full min-h-[350px] flex flex-col justify-between">
       <div>
-        <h3 className="text-xl font-bold text-black dark:text-white mb-1">
+        <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
           {name}
         </h3>
 
         <div className="flex items-baseline">
-          <p className="text-4xl font-semibold text-black dark:text-yellow-500">
+          <p className="text-4xl font-semibold text-neutral-900 dark:text-neutral-100">
             {formatPrice(price)}
           </p>
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400 ml-1">
+          <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400 ml-1">
             /{billingPeriod}
           </span>
         </div>
         {savedAmount && (
-          <p className="text-sm text-green-600 dark:text-green-500 mt-1">
+          <p className="text-sm text-indigo-600 dark:text-indigo-400 mt-1">
             {savedAmount}
           </p>
         )}
@@ -91,9 +91,9 @@ const SinglePricingCard = ({
           {features.map((feature, index) => (
             <li
               key={index}
-              className="flex items-start text-sm text-gray-700 dark:text-gray-300"
+              className="flex items-start text-sm text-neutral-700 dark:text-neutral-300"
             >
-              <Check className="w-4 h-4 mr-2 text-green-500 mt-0.5 flex-shrink-0" />
+              <Check className="w-4 h-4 mr-2 text-neutral-500 dark:text-neutral-400 mt-0.5 flex-shrink-0" />
               <span>{feature}</span>
             </li>
           ))}
@@ -103,10 +103,10 @@ const SinglePricingCard = ({
       <div className="mt-4">
         {isCurrentPlan ? (
           <Button
-            className="w-full py-2 text-md cursor-pointer dark:bg-gray-200 dark:text-black rounded-full    dark:hover:bg-gray-300"
+            className="w-full py-2 text-md bg-white dark:border-0 hover:bg-gray-50 dark:bg-gray-300 dark:hover:bg-gray-300 text-neutral-900 dark:text-black border-2 border-neutral-200 dark:border-neutral-700 rounded-full cursor-pointer"
             onClick={handleManageSubscription}
           >
-            {isPending ? "Managing..." : "Manage Subscription"}
+            {status === "pending" ? "Managing..." : "Manage Subscription"}
           </Button>
         ) : (
           <form action={checkOutAction}>
