@@ -73,16 +73,11 @@ const page = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background">
+        <div className="relative flex h-[500px] w-auto flex-col items-center justify-center overflow-hidden rounded-lg bg-background">
           <DotPattern
             glow={true}
-            width={20}
-            height={20}
-            cx={1}
-            cy={1}
-            cr={1}
             className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]"
+              "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
             )}
           />
           <Hero />

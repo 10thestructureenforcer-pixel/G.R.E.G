@@ -27,7 +27,7 @@ const Hero = () => {
             </span>{" "}
             <span className="text-foreground">for Defense Attorneys</span>
           </h2>
-          <p className="text-base sm:text-lg text-foreground max-w-xs sm:max-w-md md:max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-foreground max-w-xs sm:max-w-md md:max-w-2xl mx-auto hidden md:block">
             G.R.E.G accelerates legal strategy, streamlines research, and helps
             defense counsel stay sharp and ahead—on every case
           </p>
