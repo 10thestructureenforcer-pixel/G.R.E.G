@@ -87,7 +87,7 @@ async function SettingsPage() {
       return <div>No user found</div>;
     }
 
-    const settingsUser: SettingsUser = {
+    const settingsUser = {
       id: user.id,
       name: user.name,
       email: user.email,
@@ -96,7 +96,8 @@ async function SettingsPage() {
       client: user.client,
       planName: user.planName as "free" | "start" | "grow" | "scale",
       billingPeriod: user.billingPeriod || "",
-    };
+      stripePeriodEnd: user.stripeCurrentPeriodEnd?.toISOString() || null,
+    } as SettingsUser;
 
     return (
       <div className="p-2">

@@ -1,10 +1,19 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { PlanName } from "@/lib/types";
+import { PlanName, UserUsage } from "@/lib/types";
 import { planLimits } from "./plan-limits";
+import { redis } from "@/lib/redis";
 
-export const getUserUsage = async (userId: string) => {
+export const getUserUsage = async (userId: string): Promise<UserUsage> => {
+  const cacheKey = `user-${userId}-usage`;
+
+  const cachedUsage = await redis.get<UserUsage>(cacheKey);
+
+  if (cachedUsage) {
+    return cachedUsage;
+  }
+
   const [user, summaryCount] = await Promise.all([
     prisma.user.findUnique({
       where: {
@@ -30,6 +39,23 @@ export const getUserUsage = async (userId: string) => {
   if (!user) throw new Error("User not found");
 
   const now = new Date();
+
+  const subscriptionExpired =
+    user.stripeCurrentPeriodEnd && user.stripeCurrentPeriodEnd < now;
+
+  if (user.isSubscribed && subscriptionExpired) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isSubscribed: false },
+    });
+
+    user.isSubscribed = false;
+
+    console.log(
+      `Updated user ${user.id} subscription status to false as period has ended`
+    );
+  }
+
   const isProUser =
     user.isSubscribed ||
     (user.stripeCurrentPeriodEnd && user.stripeCurrentPeriodEnd > now);
@@ -37,7 +63,7 @@ export const getUserUsage = async (userId: string) => {
 
   const limits = planLimits[plan];
 
-  return {
+  const userUsage = {
     plan,
     clientCount: user._count.client,
     summaryCount,
@@ -45,4 +71,7 @@ export const getUserUsage = async (userId: string) => {
     canAddClient: user._count.client < limits.maxClientCount,
     canSummarize: summaryCount < limits.maxSummaryCount,
   };
+
+  await redis.set(cacheKey, userUsage, { ex: 86400 });
+  return userUsage;
 };
