@@ -32,13 +32,13 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
     },
   });
 
-  if (!data) {
-    return (
-      <div className="p-2 sm:p-4 text-muted-foreground">
-        No content available
-      </div>
-    );
-  }
+  // if (!data) {
+  //   return (
+  //     <div className="p-2 sm:p-4 text-muted-foreground">
+  //       No content available
+  //     </div>
+  //   );
+  // }
 
   async function handleRefineResponse() {
     setStartRefineWork(true);
@@ -56,14 +56,16 @@ const GeneratedDraftResponse: React.FC<GeneratedDraftResponseProps> = ({
         </button> */}
 
         <div className="flex justify-end gap-2 mb-4">
-          <Button
-            onClick={handleRefineResponse}
-            className="bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer dark:text-black"
-            disabled={isLoadingWork || isRefineWorkLoading}
-          >
-            <Wand2 className="w-4 h-4 mr-2" />
-            Refine Response
-          </Button>
+          {data && (
+            <Button
+              onClick={handleRefineResponse}
+              className="bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer dark:text-black"
+              disabled={isLoadingWork || isRefineWorkLoading}
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              Refine Response
+            </Button>
+          )}
         </div>
         <div>
           {data && !startRefineWork && <ReactMarkdownComponent data={data} />}

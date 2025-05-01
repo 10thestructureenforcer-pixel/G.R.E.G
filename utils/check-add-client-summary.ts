@@ -14,7 +14,7 @@ export const getUserUsage = async (userId: string): Promise<UserUsage> => {
     return cachedUsage;
   }
 
-  const [user, summaryCount] = await Promise.all([
+  const [user, summaryCount, challengeWorkCount] = await Promise.all([
     prisma.user.findUnique({
       where: {
         id: userId,
@@ -32,6 +32,9 @@ export const getUserUsage = async (userId: string): Promise<UserUsage> => {
       },
     }),
     prisma.caseFile.count({
+      where: { userId },
+    }),
+    prisma.challengeWork.count({
       where: { userId },
     }),
   ]);
@@ -70,8 +73,9 @@ export const getUserUsage = async (userId: string): Promise<UserUsage> => {
     limits,
     canAddClient: user._count.client < limits.maxClientCount,
     canSummarize: summaryCount < limits.maxSummaryCount,
+    canChallengeWork: challengeWorkCount < limits.maxChallengeWorkCount,
   };
 
-  await redis.set(cacheKey, userUsage, { ex: 86400 });
+  await redis.set(cacheKey, userUsage, { ex: 300 });
   return userUsage;
 };

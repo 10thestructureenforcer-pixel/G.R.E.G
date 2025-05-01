@@ -70,7 +70,7 @@ const SinglePricingCard = ({
     <div className="rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm hover:shadow-md transition-all bg-white dark:bg-neutral-900 w-full min-h-[350px] flex flex-col justify-between">
       <div>
         <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
-          {name}
+          {name === "start" ? "Starter" : name === "grow" ? "Growth" : "Scale"}
         </h3>
 
         <div className="flex items-baseline">

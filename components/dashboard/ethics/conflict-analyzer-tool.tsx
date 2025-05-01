@@ -237,12 +237,12 @@ const ConflictAnalyzerTool = () => {
 
           {/* Recent Conflicts Card */}
           <Card className="w-full max-w-full">
-            <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b px-4 py-3">
-              <CardTitle className="flex items-center gap-2 text-green-600 dark:text-green-400 text-base sm:text-lg">
-                <History className="h-5 w-5" />
+            <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between border-b px-3 py-2">
+              <CardTitle className="flex items-center gap-1.5 text-green-600 dark:text-green-400 text-sm sm:text-base">
+                <History className="h-4 w-4" />
                 Recent Conflicts
                 {recentConflicts && recentConflicts.length > 0 && (
-                  <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
+                  <span className="ml-1.5 px-1.5 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
                     {recentConflicts.length}
                   </span>
                 )}
@@ -251,41 +251,41 @@ const ConflictAnalyzerTool = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowRecentConflicts(!showRecentConflicts)}
-                className="flex items-center gap-2 sm:hidden"
+                className="flex items-center gap-1.5 h-7 text-xs sm:hidden"
               >
-                <History className="h-4 w-4" />
+                <History className="h-3.5 w-3.5" />
                 {showRecentConflicts ? "Hide Recent" : "Show Recent"}
               </Button>
             </CardHeader>
 
-            <CardContent className="p-4">
+            <CardContent className="p-2">
               {isLoadingConflicts ? (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-green-600 dark:text-green-400" />
+                <div className="flex items-center justify-center p-3">
+                  <Loader2 className="h-4 w-4 animate-spin text-green-600 dark:text-green-400" />
                 </div>
               ) : recentConflicts && recentConflicts.length > 0 ? (
-                <div className="max-h-96 overflow-y-auto pr-1 custom-scrollbar">
-                  <div className="flex flex-col gap-4 w-full">
+                <div className="max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="flex flex-col gap-2 w-full">
                     {recentConflicts.map((conflict) => (
                       <div
                         key={conflict.id}
                         onClick={() => handleLoadRecentConflict(conflict)}
                         className={cn(
-                          "flex flex-col justify-between p-4 rounded-xl cursor-pointer transition-colors border shadow-sm w-full",
+                          "flex flex-col justify-between p-2.5 rounded-lg cursor-pointer transition-colors border shadow-sm w-full",
                           conflict.conflictType === "opposingParty"
                             ? "hover:bg-red-100 dark:hover:bg-red-900/30 border-red-300 dark:border-red-800"
                             : "hover:bg-yellow-100 dark:hover:bg-yellow-900/30 border-yellow-300 dark:border-yellow-800"
                         )}
                       >
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-1.5 mb-1.5">
                           {conflict.conflictType === "opposingParty" ? (
-                            <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                            <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
                           ) : (
-                            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+                            <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
                           )}
                           <span
                             className={cn(
-                              "text-sm font-semibold",
+                              "text-xs font-medium",
                               conflict.conflictType === "opposingParty"
                                 ? "text-red-600 dark:text-red-400"
                                 : "text-yellow-600 dark:text-yellow-400"
@@ -296,8 +296,8 @@ const ConflictAnalyzerTool = () => {
                               : "Potential Conflict"}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <User className="h-4 w-4 flex-shrink-0" />
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <User className="h-3.5 w-3.5 flex-shrink-0" />
                           <span className="overflow-ellipsis overflow-hidden">
                             {conflict.conflictClientName}
                           </span>
@@ -307,9 +307,9 @@ const ConflictAnalyzerTool = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground dark:text-gray-400">
-                  <History className="h-8 w-8 mb-3" />
-                  <p className="text-sm">No recent conflicts found</p>
+                <div className="flex flex-col items-center justify-center p-4 text-center text-muted-foreground dark:text-gray-400">
+                  <History className="h-6 w-6 mb-2" />
+                  <p className="text-xs">No recent conflicts found</p>
                 </div>
               )}
             </CardContent>

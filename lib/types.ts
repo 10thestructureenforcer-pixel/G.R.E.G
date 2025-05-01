@@ -134,4 +134,5 @@ export interface UserUsage {
   };
   canAddClient: boolean;
   canSummarize: boolean;
+  canChallengeWork: boolean;
 }
