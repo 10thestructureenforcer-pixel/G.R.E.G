@@ -182,6 +182,19 @@ export default function SettingsClient({
                           {user.planName === "scale" &&
                             "Enterprise-level features"}
                         </p>
+                        {user.stripePeriodEnd && (
+                          <p className="text-xs text-muted-foreground">
+                            Your current plan will expire on{" "}
+                            {new Date(user.stripePeriodEnd).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </p>
+                        )}
                         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/5">
                             <Users className="w-3 h-3" />

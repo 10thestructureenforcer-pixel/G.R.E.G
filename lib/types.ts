@@ -90,6 +90,7 @@ export interface SettingsUser {
   planName: "free" | "start" | "grow" | "scale";
   billingPeriod?: string;
   client: Client[];
+  stripePeriodEnd?: string | null;
 }
 
 export interface RecentChallengeWork {
@@ -122,3 +123,15 @@ export interface stripeProductType {
 }
 
 export type PlanName = "free" | "start" | "grow" | "scale";
+
+export interface UserUsage {
+  plan: string;
+  clientCount: number;
+  summaryCount: number;
+  limits: {
+    maxClientCount: number;
+    maxSummaryCount: number;
+  };
+  canAddClient: boolean;
+  canSummarize: boolean;
+}

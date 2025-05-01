@@ -27,7 +27,9 @@ export async function POST(req: NextRequest) {
       session.subscription as string
     );
 
-    const currentPeriodEnd = new Date(subscription.billing_cycle_anchor * 1000);
+    const currentPeriodEnd = new Date(
+      subscription.items.data[0].current_period_end * 1000
+    );
     const planDetails = getPlanDetails(
       subscription.items.data[0].plan.metadata?.plan_name as string
     );
