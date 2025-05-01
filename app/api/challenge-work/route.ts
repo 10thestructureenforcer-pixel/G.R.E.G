@@ -8,12 +8,6 @@ import { streamText } from "ai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { NextRequest, NextResponse } from "next/server";
 
-type ReviewRequestBody = {
-  type: string;
-  client: Client;
-  content: string;
-};
-
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -29,10 +23,10 @@ export async function POST(req: NextRequest) {
 
     const { type, client, draftMode } = body;
     let content = body.content;
-    console.log("the draft mode is ", draftMode);
+    // console.log("the draft mode is ", draftMode);
 
     const userUsage = await getUserUsage(userId);
-    console.log("the user usage is ", userUsage);
+    // console.log("the user usage is ", userUsage);
 
     if (!userUsage.canChallengeWork) {
       return new Response(
@@ -53,7 +47,7 @@ export async function POST(req: NextRequest) {
       }
 
       const attachment = attachments[0];
-      console.log(attachment);
+      // console.log(attachment);
       if (!attachment.url || !attachment.url.startsWith("data:")) {
         return NextResponse.json(
           { error: "Invalid file format" },
@@ -81,7 +75,7 @@ export async function POST(req: NextRequest) {
       const fileContent = splitDocs.map((doc) => doc.pageContent).join("\n");
 
       content = fileContent;
-      console.log("the content is ", content);
+      // console.log("the content is ", content);
     }
 
     const { id, clientFirstName, clientLastName } = client;

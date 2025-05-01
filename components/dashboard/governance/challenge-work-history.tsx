@@ -12,12 +12,13 @@ import { ArrowRight, Loader2, UserCircle2, ChevronDown } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { getRecentChallengeWork } from "@/actions/get-recent-challenge-work";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RecentChallengeWork } from "@/lib/types";
 
 const ChallengeWorkHistory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(5);
+  const queryClient = useQueryClient();
 
   const router = useRouter();
 

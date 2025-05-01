@@ -76,6 +76,6 @@ export const getUserUsage = async (userId: string): Promise<UserUsage> => {
     canChallengeWork: challengeWorkCount < limits.maxChallengeWorkCount,
   };
 
-  await redis.set(cacheKey, userUsage, { ex: 300 });
+  await redis.set(cacheKey, userUsage, { ex: 86400 });
   return userUsage;
 };

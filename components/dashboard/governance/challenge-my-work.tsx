@@ -256,9 +256,7 @@ const ChallengeMyWork = ({ clients }: ChallengeMyWorkProps) => {
             })()}
           </div>
         ) : isLoadingChallengeWorkHistory ? (
-          <div className="flex justify-center items-center h-full my-4">
-            <Loader2 className="h-8 w-8 animate-spin text-green-400" />
-          </div>
+          <div></div>
         ) : messages.length > 0 ? (
           <div className="mt-6 border-t pt-4">
             <div>

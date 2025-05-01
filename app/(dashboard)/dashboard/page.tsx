@@ -77,7 +77,7 @@ const DashboardPromise = async () => {
       <div className="mb-8 md:mb-12">
         <CardTitle className="mb-2 md:mb-4 text-2xl md:text-3xl">
           Welcome back,{" "}
-          <span className="text-neutral-700 dark:text-neutral-300">
+          <span className="text-green-400 dark:text-green-500">
             {user.name ?? "User"}
           </span>{" "}
           👋

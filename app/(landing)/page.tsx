@@ -34,7 +34,7 @@ const features = [
     Icon: ScaleIcon,
     name: "Legal Analysis",
     description:
-      "Get detailed analysis of immigration cases with precedent tracking and success rates.",
+      "Get detailed analysis of immigration cases with precedent tracking",
     href: "/",
     cta: "View Analysis",
     className: "lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2",
@@ -82,19 +82,19 @@ const page = () => {
           />
           <Hero />
         </div>
-        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12">
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-12">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-emerald-600">
                 Immigration Law Solutions
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Comprehensive tools and resources for immigration attorneys to
                 streamline their practice and deliver better outcomes for
                 clients.
               </p>
             </div>
-            <BentoGrid className="lg:grid-rows-2 gap-4">
+            <BentoGrid className="lg:grid-rows-2 gap-8">
               {features.map((feature) => (
                 <BentoCard key={feature.name} {...feature} />
               ))}
@@ -102,8 +102,8 @@ const page = () => {
           </div>
         </div>
         {/* <Statistics /> */}
-        {/* <Testimonials />
-        <CTA /> */}
+        <Testimonials />
+        <CTA />
       </main>
       <div className="my-2">
         <Footer />
