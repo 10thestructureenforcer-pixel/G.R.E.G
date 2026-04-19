@@ -1,0 +1,80 @@
+enum RISK_SEVERITY {
+  CRITICAL
+  MEDIUM
+  LOW
+}
+
+enum INTAKE_STATUS {
+  PENDING
+  PROCESSING
+  COMPLETE
+  FAILED
+}
+
+model CaseIntake {
+  id           String        @id @default(uuid())
+  userId       String
+  clientId     String?
+  clientName   String
+  caseType     String
+  jurisdiction String
+  facts        String        @db.Text
+  riskTier     String        @default("UNKNOWN")
+  hearingDate  DateTime?
+  status       INTAKE_STATUS @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  strategyTree StrategyTree?
+  riskFlags    RiskFlag[]
+  crossExams   CrossExam[]
+
+  @@map("case_intakes")
+}
+
+model StrategyTree {
+  id            String     @id @default(uuid())
+  caseIntakeId  String     @unique
+  primaryPath   String     @db.Text
+  fallbackB     String     @db.Text
+  fallbackC     String     @db.Text
+  primaryProb   Int        @default(0)
+  fallbackBProb Int        @default(0)
+  fallbackCProb Int        @default(0)
+  rawOutput     String     @db.Text
+  createdAt     DateTime   @default(now())
+
+  caseIntake    CaseIntake @relation(fields: [caseIntakeId], references: [id], onDelete: Cascade)
+
+  @@map("strategy_trees")
+}
+
+model RiskFlag {
+  id           String        @id @default(uuid())
+  caseIntakeId String
+  severity     RISK_SEVERITY
+  title        String
+  detail       String        @db.Text
+  action       String
+  resolved     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  caseIntake   CaseIntake    @relation(fields: [caseIntakeId], references: [id], onDelete: Cascade)
+
+  @@map("risk_flags")
+}
+
+model CrossExam {
+  id           String     @id @default(uuid())
+  caseIntakeId String
+  witnessName  String
+  witnessRole  String
+  witnessType  String
+  questions    String     @db.Text
+  createdAt    DateTime   @default(now())
+
+  caseIntake   CaseIntake @relation(fields: [caseIntakeId], references: [id], onDelete: Cascade)
+
+  @@map("cross_exams")
+}
